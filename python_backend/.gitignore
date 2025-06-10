@@ -1,0 +1,30 @@
+# Ignorar los modelos
+*.caffemodel
+*.prototxt
+
+# Ignorar los archivos comprimidos
+*.zip
+
+# Ignorar archivos de video
+
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.mpeg
+*.mpg
+*.m4v
+*.3gp
+*.ts
+*.mts
+
+# Ignorar archivos de imagen de la detección de campeones
+src/champion_detection/results/*
+
+# Ignorar archivos de imagen de la base de datos de assets
+src/assets/images/icons/*
+src/assets/images/loading_screens/*
+src/assets/images/splash_arts/*

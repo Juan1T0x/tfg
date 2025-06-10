@@ -1,0 +1,10 @@
+tqdm
+yt-dlp
+opencv-python
+numpy
+requests
+pandas
+mwrogue
+mwclient
+Pillow
+ffmpeg

@@ -1,0 +1,10 @@
+# Ignorar archivos de imagenes y recursos estáticos
+python_backend/src/assets/images/icons/*
+python_backend/src/assets/images/loading_screens/*
+python_backend/src/assets/images/splash_arts/*
+
+# Ignorar todo el contenido de la carpeta results
+python_backend/src/champion_detection/results/*
+
+# Ignorar todo el contenido de la carpeta output
+python_backend/src/leaguepedia_api/output/*

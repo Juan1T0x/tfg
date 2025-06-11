@@ -8,3 +8,7 @@ mwrogue
 mwclient
 Pillow
 ffmpeg
+scikit-learn
+joblib
+scikit-image
+pytesseract

@@ -1,4 +1,6 @@
+yt_dlp
 fastapi
-uvicorn[standard]
-yt-dlp
+pydantic
 opencv-python
+ffmpeg
+uvicorn

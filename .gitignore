@@ -8,3 +8,6 @@ python_backend/src/champion_detection/results/*
 
 # Ignorar todo el contenido de la carpeta output
 python_backend/src/leaguepedia_api/output/*
+
+flutter_and_backend/backend/frames/*
+flutter_and_backend/backend/videos/*

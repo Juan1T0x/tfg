@@ -20,11 +20,12 @@ from typing import List, Tuple, Dict, Any, Optional
 
 # ───────── Constantes base ─────────
 REF_W, REF_H = 1920, 1080
-BLUE_HSV_LIST = [  # (HSV_low, HSV_high, area_ref en píxeles² a 1920×1080)
-    (np.array([95, 50, 50]), np.array([125, 255, 255]), 300)
+BLUE_HSV_LIST = [
+    #   low = [H,  S,  V]      high = [H,  S,   V]      área_ref
+    (np.array([92, 65, 65]),   np.array([122, 255, 255]), 300)
 ]
 ELONG_RATIO  = 0.7           # h < 0.7·w  → barra alargada
-AR_MIN, AR_MAX = 3.5, 6.5    # relación de aspecto aceptada
+AR_MIN, AR_MAX = 3.5, 10    # relación de aspecto aceptada
 
 # ───────── Tipos y helpers ROI ─────────
 Coord = Tuple[float,float]

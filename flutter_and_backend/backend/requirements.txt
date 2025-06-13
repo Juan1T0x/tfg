@@ -4,3 +4,5 @@ pydantic
 opencv-python
 ffmpeg
 uvicorn
+requests
+pandas

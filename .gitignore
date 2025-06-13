@@ -3,11 +3,14 @@ python_backend/src/assets/images/icons/*
 python_backend/src/assets/images/loading_screens/*
 python_backend/src/assets/images/splash_arts/*
 
+flutter_and_backend/backend/assets/images/*
+
 # Ignorar todo el contenido de la carpeta results
 python_backend/src/champion_detection/results/*
 
 # Ignorar todo el contenido de la carpeta output
 python_backend/src/leaguepedia_api/output/*
 
+# Ignorar archivos de temporales de procesamiento de video
 flutter_and_backend/backend/frames/*
 flutter_and_backend/backend/videos/*

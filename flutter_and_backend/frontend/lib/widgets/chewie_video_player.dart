@@ -30,7 +30,6 @@ class _ChewieVideoPlayerState extends State<ChewieVideoPlayer> {
 
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      autoPlay: true,
       looping: false,
       showControls: true,
       errorBuilder: (context, errorMessage) {

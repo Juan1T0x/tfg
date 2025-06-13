@@ -58,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _currentUrl = url;
       _controller = YoutubePlayerController.fromVideoId(
         videoId: id,
-        autoPlay: true,
         params: const YoutubePlayerParams(
           showControls: true,
           showFullscreenButton: true,

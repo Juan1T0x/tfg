@@ -1,4 +1,3 @@
-// lib/screens/home_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -7,6 +6,7 @@ import '../layouts/main_layout.dart';
 import '../widgets/meta_informacion.dart';
 import '../widgets/cargar_video_dialog.dart';
 import '../widgets/debug_panel.dart';
+import '../widgets/side_nav.dart';
 import '../theme/app_colors.dart';
 import '../widgets/youtube_video_player.dart';
 import '../services/backend_service.dart';
@@ -33,7 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _backendLog = [];
 
   // ───────── Scaffold ─────────
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  // Clave para poder abrir el Drawer desde el icono de menú del MainLayout
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Índice que debe quedar resaltado en el SideNav
+  static const int _navIndex = 3; // 0=Actualizar, 1=Consultar, 2=Team, 3=Live, 4=Historial, 5=Descargar
 
   // ──────────────────────────── init ───────────────────────────
   @override
@@ -75,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
         await _backend.sendProcessSignal(
           _currentUrl,
           secs,
-          onLog: _log, // registra el envío
+          onLog: _log,
         );
       } catch (e) {
         _log('❌ $e');
@@ -90,18 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
       if (_backendLog.length > 50) _backendLog.removeLast();
     });
   }
-
-  String _formatPos(double secs) {
-    final m = secs ~/ 60;
-    final s = secs % 60;
-    final c = ((secs - secs.floor()) * 100).round();
-    return '${m.toString().padLeft(2, '0')}:'
-        '${s.toStringAsFixed(0).padLeft(2, '0')}.'
-        '${c.toString().padLeft(2, '0')}';
-  }
-
-  String _short(String url) =>
-      url.replaceAll(RegExp(r'https?://(www\.)?'), '');
 
   // ───────────────────── callbacks Debug ─────────────────────
   void _updateFrequency(int ms) {
@@ -119,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (_) => CargarVideoDialog(
         onSubmit: (url) async {
           _loadVideo(url);
-          // señal inmediata (time = 0)
           try {
             await _backend.sendProcessSignal(url, 0, onLog: _log);
           } catch (e) {
@@ -146,19 +137,32 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
 
+      // ───────── Drawer principal con SideNav ─────────
+      drawer: Drawer(
+        width: 250,
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: SideNav(selectedIndex: _navIndex), // 3 = “Analizar partida Live”
+        ),
+      ),
+
+      // ───────── EndDrawer de depuración ─────────
+      endDrawer: DebugPanel(
+        frequencyMs: backendFrequencyMs,
+        log: _backendLog, 
+        onFrequencyChanged: _updateFrequency,
+      ),
+
+      // ───────── FAB para abrir el DebugPanel ─────────
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.bug_report),
         label: const Text('Debug'),
         onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
       ),
 
-      endDrawer: DebugPanel(
-        frequencyMs: backendFrequencyMs,
-        log: _backendLog,
-        onFrequencyChanged: _updateFrequency,
-      ),
-
+      // ───────── Contenido usando MainLayout ─────────
       body: MainLayout(
+        onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
         left: Container(
           color: AppColors.leftRighDebug,
           child: MetaInformacion(controller: _controller),

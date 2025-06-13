@@ -2,39 +2,64 @@ import 'package:flutter/material.dart';
 
 class SideNav extends StatelessWidget {
   final int selectedIndex;
-  final Function(int) onDestinationSelected;
 
   const SideNav({
     super.key,
     required this.selectedIndex,
-    required this.onDestinationSelected,
   });
 
   @override
   Widget build(BuildContext context) {
+    final items = [
+      {
+        'icon': Icons.update,
+        'label': 'Actualizar BBDD',
+        'route': '/updateDB',
+      },
+      {
+        'icon': Icons.search,
+        'label': 'Consultar BBDD',
+        'route': '/consultDB',
+      },
+      {
+        'icon': Icons.group,
+        'label': 'Team Builder',
+        'route': '/teamBuilder',
+      },
+      {
+        'icon': Icons.videogame_asset,
+        'label': 'Analizar partida Live',
+        'route': '/liveAnalysis',
+      },
+      {
+        'icon': Icons.history,
+        'label': 'Historial partidas',
+        'route': '/history',
+      },
+      {
+        'icon': Icons.download,
+        'label': 'Descargar Video',
+        'route': '/downloadVideo',
+      },
+    ];
+
     return NavigationRail(
       extended: true,
       selectedIndex: selectedIndex,
-      onDestinationSelected: onDestinationSelected,
+      onDestinationSelected: (index) {
+        if (index == selectedIndex) return;
+        Navigator.pushReplacementNamed(
+          context,
+          items[index]['route'] as String,
+        );
+      },
       labelType: NavigationRailLabelType.none,
-      destinations: const [
-        NavigationRailDestination(
-          icon: Icon(Icons.dashboard),
-          label: Text('Dashboard'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.analytics),
-          label: Text('Análisis'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.settings),
-          label: Text('Ajustes'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.info),
-          label: Text('Acerca de'),
-        ),
-      ],
+      destinations: items.map((item) {
+        return NavigationRailDestination(
+          icon: Icon(item['icon'] as IconData),
+          label: Text(item['label'] as String),
+        );
+      }).toList(),
     );
   }
 }

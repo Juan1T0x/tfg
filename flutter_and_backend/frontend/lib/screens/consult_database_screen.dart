@@ -13,25 +13,49 @@ class ConsultDatabaseScreen extends StatefulWidget {
 }
 
 class _ConsultDatabaseScreenState extends State<ConsultDatabaseScreen> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   static const int _navIndex = 1;
 
-  late Future<List<String>> _tablesFuture;
+  final DBService _db = DBService.instance;
+
+  List<String> _tables = [];
   String? _selectedTable;
   Future<List<Map<String, dynamic>>>? _rowsFuture;
 
   @override
   void initState() {
     super.initState();
-    _tablesFuture = DBService.instance.getTableNames();
+    _loadTableNames();
+  }
+
+  Future<void> _loadTableNames() async {
+    try {
+      // ---- CAST explícito a List<String> ----
+      final tables = (await _db.getTableNames()).cast<String>();
+      if (!mounted) return;
+      setState(() {
+        _tables = tables;
+        if (tables.isNotEmpty) _selectTable(tables.first);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      _showError('Error al cargar tablas: $e');
+    }
   }
 
   void _selectTable(String table) {
     setState(() {
       _selectedTable = table;
-      _rowsFuture = DBService.instance.getAllRows(table);
+      _rowsFuture = _db.getTableRows(table);
     });
   }
+
+  void _showError(String msg) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg, style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -47,61 +71,47 @@ class _ConsultDatabaseScreenState extends State<ConsultDatabaseScreen> {
       body: MainLayout(
         onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
 
-        // ───────── Panel izquierdo: lista de tablas ─────────
-        left: FutureBuilder<List<String>>(
-          future: _tablesFuture,
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snap.hasError) {
-              return Center(child: Text('Error: ${snap.error}'));
-            }
-
-            final tables = snap.data!;
-            // Seleccionar la primera tabla automáticamente
-            if (_selectedTable == null && tables.isNotEmpty) {
-              // esperar al próximo frame para evitar setState en build
-              WidgetsBinding.instance.addPostFrameCallback(
-                (_) => _selectTable(tables.first),
-              );
-            }
-
-            return Container(
-              color: AppColors.leftRighDebug,
-              padding: const EdgeInsets.all(16),
-              child: ListView(
-                children: [
-                  const Text('Tablas:',
-                      style: TextStyle(color: Colors.white)),
-                  const SizedBox(height: 8),
-                  for (final t in tables)
-                    ListTile(
-                      title: Text(t,
-                          style: const TextStyle(color: Colors.white)),
-                      selected: t == _selectedTable,
-                      onTap: () => _selectTable(t),
-                    ),
-                ],
-              ),
-            );
-          },
+        /* ───────── Panel izquierdo ───────── */
+        left: Container(
+          color: AppColors.leftRighDebug,
+          padding: const EdgeInsets.all(16),
+          child: _tables.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : ListView(
+                  children: [
+                    const Text('Tablas',
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                    const SizedBox(height: 12),
+                    for (final t in _tables)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                t == _selectedTable ? Colors.blueGrey : Colors.blue,
+                          ),
+                          onPressed: () => _selectTable(t),
+                          child: Text(t),
+                        ),
+                      ),
+                  ],
+                ),
         ),
 
-        // ───────── Centro: tabla con filas ─────────
+        /* ───────── Panel central ───────── */
         center: _selectedTable == null
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: Text('Seleccione una tabla'))
             : FutureBuilder<List<Map<String, dynamic>>>(
                 future: _rowsFuture,
-                builder: (context, snap) {
-                  if (snap.connectionState != ConnectionState.done) {
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (snap.hasError) {
-                    return Center(child: Text('Error: ${snap.error}'));
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
                   }
 
-                  final rows = snap.data!;
+                  final rows = snapshot.data ?? [];
                   if (rows.isEmpty) {
                     return Center(child: Text('$_selectedTable está vacía'));
                   }
@@ -111,11 +121,10 @@ class _ConsultDatabaseScreenState extends State<ConsultDatabaseScreen> {
                     child: PaginatedDataTable(
                       header: Text('$_selectedTable (${rows.length} filas)'),
                       columns: [
-                        for (final c in cols) DataColumn(label: Text(c))
+                        for (final c in cols) DataColumn(label: Text(c)),
                       ],
                       source: _DataSource(rows, cols),
-                      rowsPerPage:
-                          rows.length < 10 ? rows.length : 10, // ajuste dinámico
+                      rowsPerPage: rows.length < 10 ? rows.length : 10,
                       showCheckboxColumn: false,
                     ),
                   );
@@ -128,17 +137,17 @@ class _ConsultDatabaseScreenState extends State<ConsultDatabaseScreen> {
   }
 }
 
+/* ───────────────────────────────────────────── */
 class _DataSource extends DataTableSource {
   final List<Map<String, dynamic>> rows;
   final List<String> cols;
+
   _DataSource(this.rows, this.cols);
 
   @override
   DataRow getRow(int index) => DataRow.byIndex(
         index: index,
-        cells: [
-          for (final c in cols) DataCell(Text('${rows[index][c]}'))
-        ],
+        cells: [for (final c in cols) DataCell(Text('${rows[index][c]}'))],
       );
 
   @override

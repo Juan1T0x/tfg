@@ -1,77 +1,49 @@
 // lib/services/db_service.dart
-import 'package:sqflite/sqflite.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class DBService {
   DBService._();
   static final DBService instance = DBService._();
-  Database? _db;
 
-  Future<Database> get db async => _db ??= await _initDB();
+  static const _apiBase = 'http://localhost:8888';
 
-  Future<Database> _initDB() async {
-    if (kIsWeb) {
-      // Web: solo nombre lógico
-      final db = await openDatabase('moba_analysis');
-      // Si no existen, crea las tablas mínimas para tus pruebas
-      await _ensureSchema(db);
-      return db;
-    } else {
-      // Móvil/escritorio: la lógica que ya tenías
-      final dir = await getApplicationSupportDirectory();
-      final path = join(dir.path, 'moba_analysis.sqlite');
-      if (!await File(path).exists()) {
-        final data = await rootBundle.load('assets/db/moba_analysis.sqlite');
-        await File(path).writeAsBytes(
-            data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
-            flush: true);
-      }
-      return openDatabase(path,
-          version: 1,
-          onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'));
+  // Guarda en memoria los nombres de tabla y la caché de filas para evitar peticiones redundantes
+  List? _tableNamesCache;
+  final Map<String, List<Map<String, dynamic>>> _rowsCache = {};
+
+  /// Devuelve la lista de tablas disponibles en el backend
+  Future<List> getTableNames() async {
+    if (_tableNamesCache != null) return _tableNamesCache!;
+    final res = await http.get(Uri.parse('$_apiBase/api/database'));
+    if (res.statusCode != 200) {
+      throw Exception('Backend ${res.statusCode}: ${res.body}');
     }
+
+    final Map<String, dynamic> decoded = jsonDecode(res.body);
+    _tableNamesCache = decoded.keys.toList();
+    return _tableNamesCache!;
   }
 
-  Future<void> _ensureSchema(Database db) async {
-    // Crea SOLO si no existen
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS partidas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        jugador TEXT,
-        resultado TEXT,
-        fecha TEXT
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS jugadores (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT,
-        elo INTEGER
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS videos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        url TEXT,
-        titulo TEXT
-      )
-    ''');
+  /// Devuelve todas las filas de una tabla concreta
+  Future<List<Map<String, dynamic>>> getTableRows(String table) async {
+    if (_rowsCache.containsKey(table)) return _rowsCache[table]!;
+    final res = await http.get(Uri.parse('$_apiBase/api/database/$table'));
+    if (res.statusCode != 200) {
+      throw Exception('Backend ${res.statusCode}: ${res.body}');
+    }
+
+    final Map<String, dynamic> decoded = jsonDecode(res.body);
+    final List<dynamic> rawRows = decoded[table] as List<dynamic>;
+    final rows = rawRows.cast<Map<String, dynamic>>();
+
+    _rowsCache[table] = rows;
+    return rows;
   }
 
-  // --- utilidades ya existentes ---
-  Future<List<String>> getTableNames() async {
-    final database = await db;
-    final res = await database.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
-    return res.map((e) => e['name'] as String).toList();
-  }
-
-  Future<List<Map<String, dynamic>>> getAllRows(String table) async {
-    final database = await db;
-    return database.query(table);
+  /// Limpia las cachés (por ejemplo, si la BBDD se actualiza)
+  void invalidateCache() {
+    _tableNamesCache = null;
+    _rowsCache.clear();
   }
 }

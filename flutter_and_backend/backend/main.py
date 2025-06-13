@@ -8,9 +8,11 @@ import argparse
 import hashlib
 import subprocess
 import asyncio
+import sqlite3
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, HttpUrl
 import uvicorn
 
@@ -20,6 +22,7 @@ from yt_dlp import YoutubeDL
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 FRAMES_DIR   = os.path.join(BASE_DIR, 'frames')
 COOKIES_PATH = os.path.join(BASE_DIR, 'cookies.txt')
+DB_PATH = os.path.join(BASE_DIR, "assets", "db", "moba_analysis.sqlite")
 
 os.makedirs(FRAMES_DIR, exist_ok=True)
 
@@ -30,6 +33,31 @@ queue: asyncio.Queue[dict] = asyncio.Queue()
 class VideoSignal(BaseModel):
     url:  HttpUrl
     time: float  # segundos
+
+# ─────────────────────── helpers ────────────────────────
+def _export_db_to_json() -> dict:
+    """Devuelve todas las tablas (excepto las internas) como dict JSON-friendly."""
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table' "
+                    "AND name NOT LIKE 'sqlite_%'")
+        tables = [row["name"] for row in cur.fetchall()]
+
+        dump: dict[str, list[dict]] = {}
+        for t in tables:
+            cur.execute(f"SELECT * FROM {t}")
+            dump[t] = [dict(r) for r in cur.fetchall()]
+    return dump
+
+def _export_single_table(table: str) -> list[dict]:
+    """Devuelve todas las filas de una tabla ya validada."""
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute(f"SELECT * FROM {table}")
+        return [dict(r) for r in cur.fetchall()]
 
 # ──────────────────────────── FastAPI ────────────────────────────
 app = FastAPI(title="Frame Extractor (async queue)")
@@ -125,6 +153,23 @@ async def process_signal(sig: VideoSignal):
     await queue.put({'url': url, 'time': time})
     print(f"🟢 Señal encolada: {url} @ {time:.2f}s → {frame_name}")
     return {"status": "queued", "frameName": frame_name}
+
+@app.get("/api/database")
+async def get_full_database():
+    """Devuelve todas las tablas y filas en JSON."""
+    data = await asyncio.to_thread(_export_db_to_json)
+    return data
+
+# ------------- NUEVO ENDPOINT POR TABLA -------------
+VALID_TABLES = {"versions", "champions", "leaguepedia_games"}
+
+@app.get("/api/database/{table_name}")
+async def get_table_data(table_name: str):
+    """Devuelve las filas de una tabla concreta."""
+    if table_name not in VALID_TABLES:
+        raise HTTPException(status_code=404, detail="Tabla no encontrada")
+    rows = await asyncio.to_thread(_export_single_table, table_name)
+    return {table_name: rows}
 
 # ──────────────────────────── Entrada ────────────────────────────
 if __name__ == "__main__":

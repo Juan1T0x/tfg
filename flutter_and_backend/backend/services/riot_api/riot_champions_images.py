@@ -63,3 +63,67 @@ def download_all_images(version: str) -> int:
     else:
         print("✔ Biblioteca de imágenes ya al día.")
     return downloaded
+
+# ────────────────────────── RUTAS ABSOLUTAS ───────────────────────────
+
+def get_icons_path() -> str:
+    """Ruta absoluta a la carpeta de iconos."""
+    return str(ICON_DIR.resolve())
+
+def get_splash_arts_path() -> str:
+    """Ruta absoluta a la carpeta de splash arts."""
+    return str(SPLASH_DIR.resolve())
+
+def get_loading_screens_path() -> str:
+    """Ruta absoluta a la carpeta de loading screens."""
+    return str(LOADING_DIR.resolve())
+
+# ───────────────────────── HELPERS PARA URLs ───────────────────────────
+
+_BASE_URL = "http://localhost:8888"
+_ICON_MOUNT   = "/static/icons"
+_SPLASH_MOUNT = "/static/splash_arts"
+_LOAD_MOUNT   = "/static/loading_screens"
+
+
+
+def _folder_to_urls(folder: Path, mount: str) -> list[str]:
+    return [
+        f"{_BASE_URL}{mount}/{f.name}"
+        for f in folder.iterdir()
+        if f.is_file()
+    ]
+
+def list_icons_urls()        -> list[str]: 
+    return _folder_to_urls(ICON_DIR,   _ICON_MOUNT)
+
+def list_splash_urls()       -> list[str]: 
+    return _folder_to_urls(SPLASH_DIR, _SPLASH_MOUNT)
+
+def list_loading_urls()      -> list[str]: 
+    return _folder_to_urls(LOADING_DIR,_LOAD_MOUNT)
+
+def champion_images_urls(champion_key: str) -> dict[str, str]:
+    """
+    Devuelve las tres URLs (icon, splash, loading) de `champion_key`
+    – la *key* de Riot usada en los nombres de fichero (Aatrox, DrMundo, …)
+
+    Lanza FileNotFoundError si falta alguna de las tres imágenes.
+    """
+    icon   = ICON_DIR   / f"{champion_key}_icon.png"
+    splash = SPLASH_DIR / f"{champion_key}_splash.jpg"
+    load   = LOADING_DIR/ f"{champion_key}_loading.jpg"
+
+    for f in (icon, splash, load):
+        if not f.exists():
+            raise FileNotFoundError(
+                f"{f.name} no encontrado. El campeón {champion_key} no existe o no está en la base de datos."
+            )
+
+    return {
+        "champion"      : champion_key,
+        "icon"          : f"{_BASE_URL}{_ICON_MOUNT}/{icon.name}",
+        "splash_art"    : f"{_BASE_URL}{_SPLASH_MOUNT}/{splash.name}",
+        "loading_screen": f"{_BASE_URL}{_LOAD_MOUNT}/{load.name}",
+    }
+

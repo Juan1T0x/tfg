@@ -14,7 +14,7 @@ class ConsultDatabaseScreen extends StatefulWidget {
 
 class _ConsultDatabaseScreenState extends State<ConsultDatabaseScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  static const int _navIndex = 1;
+  static const int _navIndex = 1; // 0=Actualizar, 1=Consultar, 2=Gallery, 3=Team, 4=Live, 5=Historial, 6=Descargar
 
   final DBService _db = DBService.instance;
 

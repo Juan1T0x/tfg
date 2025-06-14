@@ -5,6 +5,8 @@ Arranca con:
 import argparse, uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from api import api_router        # importa todos los routers
 
 app = FastAPI(title="TFG MOBA ANALYSIS")
@@ -14,7 +16,7 @@ app.add_middleware(
     allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
 )
 
-app.include_router(api_router)    # monta /api/…
+
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
@@ -30,3 +32,10 @@ if __name__ == "__main__":
         reload=args.reload,
         reload_dirs=["."],
     )
+
+IMG_BASE   = Path(__file__).resolve().parent / "assets" / "images"
+app.mount("/static/icons",           StaticFiles(directory=IMG_BASE / "icons"),           name="icons")
+app.mount("/static/splash_arts",     StaticFiles(directory=IMG_BASE / "splash_arts"),     name="splash_arts")
+app.mount("/static/loading_screens", StaticFiles(directory=IMG_BASE / "loading_screens"), name="loading")
+
+app.include_router(api_router)

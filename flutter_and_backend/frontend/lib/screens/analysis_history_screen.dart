@@ -15,7 +15,7 @@ class _AnalysisHistoryScreenState extends State<AnalysisHistoryScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Índice que debe quedar resaltado en el SideNav
-  static const int _navIndex = 4; // 0=Actualizar, 1=Consultar, 2=Team, 3=Live, 4=Historial, 5=Descargar
+  static const int _navIndex = 5; // 0=Actualizar, 1=Consultar, 2=Gallery, 3=Team, 4=Live, 5=Historial, 6=Descargar
 
   @override
   Widget build(BuildContext context) {

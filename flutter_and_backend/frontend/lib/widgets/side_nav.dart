@@ -22,6 +22,11 @@ class SideNav extends StatelessWidget {
         'route': '/consultDB',
       },
       {
+        'icon': Icons.image,
+        'label': 'Galería de Imágenes',
+        'route': '/gallery',
+      },
+      {
         'icon': Icons.group,
         'label': 'Team Builder',
         'route': '/teamBuilder',

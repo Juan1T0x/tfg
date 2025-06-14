@@ -165,7 +165,15 @@ def get_champion_names_and_classes(version: str) -> List[Tuple[str, str]]:
         ).fetchall()
     return [(r["champion_name"], r["roles"]) for r in rows]
 
-
+def get_champions(version: str) -> List[dict]:
+    """
+    Devuelve TODA la tabla champions como lista de dicts
+    (se asegura antes de que esté actualizada).
+    """
+    update_champions_db(version)                # refresca si es necesario
+    with _open_conn() as conn:
+        rows = conn.execute(f"SELECT * FROM {TABLE}").fetchall()
+    return [dict(r) for r in rows]
 
 # ───────────────────────── CLI/debug ───────────────────────────
 def main() -> None:

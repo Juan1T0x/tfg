@@ -5,6 +5,7 @@ import '../screens/consult_database_screen.dart';
 import '../screens/team_builder_screen.dart';
 import '../screens/analysis_history_screen.dart';
 import '../screens/download_video_screen.dart';
+import '../screens/gallery_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/updateDB': (_) => const UpdateDatabaseScreen(),
         '/consultDB': (_) => const ConsultDatabaseScreen(),
+        '/gallery': (_) => const GalleryScreen(),
         '/teamBuilder': (_) => const TeamBuilderScreen(),
         '/liveAnalysis': (_) => const HomeScreen(),
         '/history': (_) => const AnalysisHistoryScreen(),

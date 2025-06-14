@@ -8,11 +8,18 @@ from services.riot_api.riot_versions import (
     save_versions,
     get_versions
 )
-from services.riot_api.riot_champions_images import download_all_images
+from services.riot_api.riot_champions_images import (
+    download_all_images,
+    list_icons_urls,
+    list_splash_urls,
+    list_loading_urls,
+    champion_images_urls
+)
 from services.riot_api.riot_champions_info import (
     update_champions_db,
     get_champion_names,
-    get_champion_names_and_classes
+    get_champion_names_and_classes,
+    get_champions
 )
 
 router = APIRouter(prefix="/api/riot", tags=["riot"])
@@ -28,7 +35,7 @@ def _http_error(e: requests.HTTPError) -> HTTPException:
 # ────────────────────────── ENDPOINTS ───────────────────────────
 
 # ────────────────────────── VERSIONS ───────────────────────────
-@router.get("/versions")
+@router.get("/versions", tags=["riot", "versions"])
 async def versions():
     """
     Devuelve la lista completa de versiones en orden Riot
@@ -40,7 +47,7 @@ async def versions():
         raise _http_error(e) from e
     return {"versions": versions, "status": "ok"}
 
-@router.post("/versions/update")
+@router.post("/versions/update", tags=["riot", "versions"])
 async def update_versions():
     """Actualiza solo la tabla versions."""
     try:
@@ -57,7 +64,20 @@ async def update_versions():
 
 # ────────────────────────── CHAMPIONS ───────────────────────────
 
-@router.get("/champions/names")
+@router.get("/champions", tags=["riot", "champions"])
+async def champions():
+    """
+    Devuelve la tabla completa de campeones como lista de dicts.
+    Cada dict incluye todas las columnas (stats, roles, etc.).
+    """
+    try:
+        version = await asyncio.to_thread(get_latest_version)
+        data = await asyncio.to_thread(get_champions, version)
+    except requests.HTTPError as e:
+        raise _http_error(e) from e
+    return {"version_used": version, "champions": data}
+
+@router.get("/champions/names", tags=["riot", "champions"])
 async def champion_names():
     """
     Devuelve una lista alfabética con todos los nombres de campeones.
@@ -66,11 +86,11 @@ async def champion_names():
     try:
         version = await asyncio.to_thread(get_latest_version)
         names = await asyncio.to_thread(get_champion_names, version)
-    except requests.HTTPError as e:
+    except requests.HTºTPError as e:
         raise _http_error(e) from e
     return {"version_used": version, "champion_names": names}
 
-@router.get("/champions/names_and_classes")
+@router.get("/champions/names_and_classes", tags=["riot", "champions"])
 async def champion_names_and_classes():
     """
     Devuelve una lista [(name, roles), …] ordenada alfabéticamente.
@@ -84,7 +104,7 @@ async def champion_names_and_classes():
         raise _http_error(e) from e
     return {"version_used": version, "champions": data}
 
-@router.post("/champions/update")
+@router.post("/champions/update", tags=["riot", "champions"])
 async def update_champions_info():
     """Actualiza solo la tabla champions (stats, roles…)."""
     try:
@@ -101,7 +121,35 @@ async def update_champions_info():
 
 # ────────────────────────── IMAGES ───────────────────────────
 
-@router.post("/images/update")
+@router.get("/images/icons", tags=["riot", "images"])
+async def images_icons():
+    """Lista de URLs de iconos disponibles."""
+    return {"icons": list_icons_urls(), "status": "ok"}
+
+@router.get("/images/splash_arts", tags=["riot", "images"])
+async def images_splash():
+    """Lista de URLs de splash arts disponibles."""
+    return {"splash_arts": list_splash_urls(), "status": "ok"}
+
+@router.get("/images/loading_screens", tags=["riot", "images"])
+async def images_loading():
+    """Lista de URLs de loading screens disponibles."""
+    return {"loading_screens": list_loading_urls(), "status": "ok"}
+
+@router.get("/images/{champion_key}", tags=["riot", "images"])
+async def images_by_champion(champion_key: str):
+    """
+    Devuelve icon, splash art y loading screen de *un* campeón.
+    El parámetro **champion_key** es la *key* de Riot
+    (Aatrox, DrMundo, KhaZix, etc.).
+    """
+    try:
+        data = champion_images_urls(champion_key)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    return {**data, "status": "ok"}
+
+@router.post("/images/update", tags=["riot", "images"])
 async def update_champions_images():
     """Actualiza / descarga solo las imágenes de campeones."""
     try:
@@ -117,7 +165,8 @@ async def update_champions_images():
 
 # ────────────────────────── DATABASE ───────────────────────────
 
-@router.post("/database/update")
+
+@router.post("/database/update", tags=["riot", "database"])
 async def update_database():
     """
     Endpoint compuesto: ejecuta los tres anteriores

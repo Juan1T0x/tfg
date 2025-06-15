@@ -175,6 +175,53 @@ def get_champions(version: str) -> List[dict]:
         rows = conn.execute(f"SELECT * FROM {TABLE}").fetchall()
     return [dict(r) for r in rows]
 
+def roles_of_champion(champion_name: str, version: str) -> str | None:
+    """
+    Devuelve la cadena `roles` del campeón indicado (p.ej. "Mage, Assassin").
+    Si no existe, retorna **None**.
+    """
+    update_champions_db(version)
+    with _open_conn() as conn:
+        row = conn.execute(
+            f"""
+            SELECT roles
+              FROM {TABLE}
+             WHERE lower(champion_name)=lower(?)
+             LIMIT 1
+            """,
+            (champion_name,),
+        ).fetchone()
+    return None if row is None else row["roles"]
+
+def _normalize(s: str) -> str:
+    """Lower-case y sin espacios para comparaciones robustas."""
+    return s.replace(" ", "").lower()
+
+def champions_with_roles(
+    roles_query: str,
+    version: str,
+) -> List[str]:
+    """
+    Devuelve los nombres de campeones cuyo campo **roles**
+    coincide *exactamente* con `roles_query` (misma secuencia).
+
+    • `roles_query` debe ir con la misma notación que Riot:
+         "Fighter"              → sólo los de 1 rol Fighter
+         "Marksman, Mage"       → exactamente esos dos y en ese orden
+    """
+    roles_query_norm = _normalize(roles_query)
+    update_champions_db(version)
+
+    with _open_conn() as conn:
+        rows = conn.execute(f"SELECT champion_name, roles FROM {TABLE}").fetchall()
+
+    return [
+        r["champion_name"]
+        for r in rows
+        if _normalize(r["roles"]) == roles_query_norm
+    ]
+
+
 # ───────────────────────── CLI/debug ───────────────────────────
 def main() -> None:
     version = get_latest_version()

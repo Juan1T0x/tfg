@@ -2,27 +2,48 @@ import 'package:flutter/material.dart';
 import '../layouts/main_layout.dart';
 import '../widgets/side_nav.dart';
 import '../theme/app_colors.dart';
+import '../services/db_service.dart';
 
 class UpdateDatabaseScreen extends StatefulWidget {
   const UpdateDatabaseScreen({super.key});
 
   @override
-  State<UpdateDatabaseScreen> createState() => _UpdateDatabaseScreen();
+  State<UpdateDatabaseScreen> createState() => _UpdateDatabaseScreenState();
 }
 
-class _UpdateDatabaseScreen extends State<UpdateDatabaseScreen> {
-  // Clave para poder abrir el Drawer desde el icono de menú del MainLayout
+class _UpdateDatabaseScreenState extends State<UpdateDatabaseScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  // Índice que debe quedar resaltado en el SideNav
   static const int _navIndex = 0; // 0=Actualizar, 1=Consultar, 2=Gallery, 3=Team, 4=Live, 5=Historial, 6=Descargar
+
+  bool _updating = false;
+  Map<String, dynamic>? _lastResult;
+  final DBService _db = DBService.instance;
+
+  Future<void> _handleUpdate() async {
+    setState(() {
+      _updating = true;
+      _lastResult = null;
+    });
+
+    try {
+      final result = await _db.updateFullDatabase();
+      setState(() => _lastResult = result);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('✔ Base de datos actualizada')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Error: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _updating = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-
-      // Drawer lateral con el SideNav
       drawer: Drawer(
         width: 250,
         child: Align(
@@ -30,30 +51,44 @@ class _UpdateDatabaseScreen extends State<UpdateDatabaseScreen> {
           child: SideNav(selectedIndex: _navIndex),
         ),
       ),
-
-      // Cuerpo principal usando MainLayout
       body: MainLayout(
         onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
 
-        left: Container(
-          color: AppColors.leftRighDebug,
-          padding: const EdgeInsets.all(16),
-          child: const Text(
-            'Aquí irá el formulario para actualizar la BBDD',
-            style: TextStyle(color: Colors.white),
-          ),
+        /* ───────── Panel izquierdo (vacío) ───────── */
+        left: Container(color: AppColors.leftRighDebug),
+
+        /* ───────── Panel central ───────── */
+        center: Center(
+          child: _updating
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 12),
+                    Text('Actualizando base de datos…'),
+                  ],
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.sync),
+                      label: const Text('Actualizar base de datos'),
+                      onPressed: _handleUpdate,
+                    ),
+                    if (_lastResult != null) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        'Base de datos actualizada:',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(_lastResult.toString()),
+                    ],
+                  ],
+                ),
         ),
 
-        center: const Center(
-          child: Text(
-            'Actualizar BBDD',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-
-        right: Container(
-          color: AppColors.leftRighDebug,
-        ),
+        right: Container(color: AppColors.leftRighDebug),
       ),
     );
   }

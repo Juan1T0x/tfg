@@ -6,3 +6,4 @@ ffmpeg
 uvicorn
 requests
 pandas
+python-multipart

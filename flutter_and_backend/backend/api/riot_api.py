@@ -19,7 +19,9 @@ from services.riot_api.riot_champions_info import (
     update_champions_db,
     get_champion_names,
     get_champion_names_and_classes,
-    get_champions
+    get_champions,
+    roles_of_champion,
+    champions_with_roles
 )
 
 router = APIRouter(prefix="/api/riot", tags=["riot"])
@@ -103,6 +105,64 @@ async def champion_names_and_classes():
     except requests.HTTPError as e:
         raise _http_error(e) from e
     return {"version_used": version, "champions": data}
+
+@router.get(
+    "/champions/{champion_name}/roles",
+    tags=["riot", "champions"],
+    summary="Roles de un campeón",
+)
+async def champion_roles(champion_name: str):
+    """
+    Devuelve el contenido literal de la columna **roles**
+    (por ejemplo `"Mage, Assassin"`) del campeón indicado.
+    """
+    try:
+        version = await asyncio.to_thread(get_latest_version)
+        roles = await asyncio.to_thread(roles_of_champion, champion_name, version)
+    except requests.HTTPError as e:
+        raise _http_error(e) from e
+
+    if roles is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Campeón '{champion_name}' no encontrado.",
+        )
+
+    return {
+        "version_used": version,
+        "champion": champion_name,
+        "roles": roles,
+        "status": "ok",
+    }
+
+
+@router.get(
+    "/champions/by_roles",
+    tags=["riot", "champions"],
+    summary="Campeones que cumplen unos roles (match exacto)",
+)
+async def champions_by_roles(roles: str):
+    """
+    Devuelve **solo** los campeones cuyo campo `roles`
+    coincide *exactamente* con la cadena suministrada.
+
+    Ejemplos válidos de `roles`:
+
+    * `Fighter`
+    * `Marksman, Mage`
+    """
+    try:
+        version = await asyncio.to_thread(get_latest_version)
+        champs = await asyncio.to_thread(champions_with_roles, roles, version)
+    except requests.HTTPError as e:
+        raise _http_error(e) from e
+
+    return {
+        "version_used": version,
+        "roles_query": roles,
+        "champions": champs,
+        "status": "ok",
+    }
 
 @router.post("/champions/update", tags=["riot", "champions"])
 async def update_champions_info():

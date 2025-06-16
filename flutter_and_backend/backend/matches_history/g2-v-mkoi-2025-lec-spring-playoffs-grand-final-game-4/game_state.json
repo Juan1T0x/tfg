@@ -1,0 +1,159 @@
+{
+    "static_game_info": {
+        "blue": {
+            "color": "BLUE",
+            "team_name": "Blue Team",
+            "champions": {
+                "TOP": "ksante",
+                "JUNGLE": "naafiri",
+                "MID": "kassadin",
+                "BOT": "ezreal",
+                "SUPPORT": "leona"
+            }
+        },
+        "red": {
+            "color": "RED",
+            "team_name": "Red Team",
+            "champions": {
+                "TOP": "drmundo",
+                "JUNGLE": "skarner",
+                "MID": "milio",
+                "BOT": "jinx",
+                "SUPPORT": "thresh"
+            }
+        }
+    },
+    "live_game_info": {
+        "startGame": {
+            "blue": {
+                "color": "BLUE",
+                "players": {
+                    "TOP": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "JUNGLE": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "MID": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "BOT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "SUPPORT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    }
+                },
+                "stats": {
+                    "total_kills": null,
+                    "total_gold": null,
+                    "towers": null,
+                    "objectives": null
+                }
+            },
+            "red": {
+                "color": "RED",
+                "players": {
+                    "TOP": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "JUNGLE": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "MID": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "BOT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "SUPPORT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    }
+                },
+                "stats": {
+                    "total_kills": null,
+                    "total_gold": null,
+                    "towers": null,
+                    "objectives": null
+                }
+            },
+            "global_": {
+                "dragon_timer": null,
+                "baron_timer": null,
+                "herald_timer": null,
+                "voidgrub_timer": null,
+                "atahkan_timer": null
+            }
+        }
+    }
+}

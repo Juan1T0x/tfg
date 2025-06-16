@@ -18,14 +18,18 @@ class DBService {
   final Map<String, List<Map<String, dynamic>>> _rowsCache = {};
   List<String>? _championNamesCache;
 
+  /// cache en memoria para los game-states completos
+  Map<String, dynamic>? _allGameStatesCache;
+
   /* ───────── tabla fija ───────── */
   Future<List<String>> getTableNames() async => _tables;
 
   /* ───────── Nombres de campeón ───────── */
   Future<List<String>> getChampionNames() async {
     if (_championNamesCache != null) return _championNamesCache!;
-    final res =
-        await http.get(Uri.parse('$_apiBase/api/riot/champions/names'));
+    final res = await http.get(
+      Uri.parse('$_apiBase/api/riot/champions/names'),
+    );
     if (res.statusCode != 200) {
       throw Exception('Backend ${res.statusCode}: ${res.body}');
     }
@@ -87,14 +91,13 @@ class DBService {
 
   /* ───────── NUEVOS END-POINTS ───────── */
 
-  /// Devuelve el contenido de la columna **roles** para `championName`
-  /// (p.ej. `"Marksman, Assassin"`).  Null si no existe.
+  /// Devuelve **los roles** de un campeón concreto o `null` si no existen.
   Future<String?> getRolesOfChampion(String championName) async {
     final clean = championName.replaceAll("’", "").replaceAll("'", "").trim();
     final uri = Uri.parse('$_apiBase/api/riot/champions/$clean/roles');
 
     final res = await http.get(uri);
-    if (res.statusCode == 404) return null;          // no encontrado
+    if (res.statusCode == 404) return null;
     if (res.statusCode != 200) {
       throw Exception('Backend ${res.statusCode}: ${res.body}');
     }
@@ -103,8 +106,8 @@ class DBService {
     return decoded['roles'] as String;
   }
 
-  /// Lista de campeones cuyo campo **roles** coincide *exactamente*
-  /// con la cadena proporcionada (se respeta el orden).
+  /// Devuelve los campeones cuyo campo **roles** coincide exactamente
+  /// con `roles`.
   Future<List<String>> getChampionsByRoles(String roles) async {
     final uri = Uri.parse(
       '$_apiBase/api/riot/champions/by_roles'
@@ -118,6 +121,28 @@ class DBService {
 
     final decoded = jsonDecode(res.body) as Map<String, dynamic>;
     return (decoded['champions'] as List<dynamic>).cast<String>();
+  }
+
+  /// ──────── ⏩ NUEVO ⏩ ────────
+  /// Recupera **todos** los `game_state.json` guardados en el backend
+  /// (clave = _slug_ de la partida).
+  ///
+  /// El resultado queda cacheado en memoria; pasa `forceRefresh: true`
+  /// para forzar una nueva descarga.
+  Future<Map<String, dynamic>> getAllGameStates({bool forceRefresh = false}) async {
+    if (!forceRefresh && _allGameStatesCache != null) {
+      return _allGameStatesCache!;
+    }
+
+    final res = await http.get(Uri.parse('$_apiBase/api/game_state/all'));
+    if (res.statusCode != 200) {
+      throw Exception('Backend ${res.statusCode}: ${res.body}');
+    }
+
+    final decoded = jsonDecode(res.body) as Map<String, dynamic>;
+    final states = decoded['matches'] as Map<String, dynamic>;
+    _allGameStatesCache = states;
+    return states;
   }
 
   /* ───────── ACTUALIZAR BBDD COMPLETA ───────── */
@@ -135,5 +160,6 @@ class DBService {
   void invalidateCache() {
     _rowsCache.clear();
     _championNamesCache = null;
+    _allGameStatesCache = null;
   }
 }

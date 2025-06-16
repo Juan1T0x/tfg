@@ -1,15 +1,15 @@
 // lib/screens/home_screen.dart
 //
-// Pantalla “Live Game Analysis” actualizada para utilizar el nuevo
-// VideoService y la nueva API del backend:
+// Home Screen (Live Game Analysis) — ahora el botón
+// “Empezar análisis de Champion Select” llama directamente al
+// end-point `/api/pipeline/startChampionSelect` a través de
+// `PipelineService`.
 //
-//   • extractFrameNow  →  un único frame (Champion Select)
-//   • queueFrameExtraction (antiguo processVideoSignal)  →  envío periódico
+// El *match title* se toma del propio título del vídeo de YouTube
+// (`controller.metadata.title`).  Si no estuviera disponible
+// (p. ej. mientras se descarga el player), se usa la URL como
+// valor de reserva.
 //
-// Se deja desactivado el envío periódico hasta que el usuario pulse
-// “Empezar análisis de Main Game”.                                     
-//
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -20,7 +20,8 @@ import '../widgets/debug_panel.dart';
 import '../widgets/side_nav.dart';
 import '../widgets/youtube_video_player.dart';
 import '../theme/app_colors.dart';
-import '../services/video_service.dart';            // ← nuevo servicio unificado
+import '../services/video_service.dart';
+import '../services/pipeline_service.dart';   // ⇦ NUEVO
 
 // Frecuencia por defecto (ms) para la cola del backend
 int backendFrequencyMs = 5_000;
@@ -32,29 +33,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // ───────── Youtube player ─────────
+  /*───────── YouTube player ─────────*/
   late YoutubePlayerController _controller;
   String _currentUrl = 'https://www.youtube.com/watch?v=jx79sZhjzKQ';
   Key _videoKey = UniqueKey();
   bool _mostrarVideo = true;
 
-  // ───────── Backend (VideoService) ─────────
-  final VideoService _video = const VideoService();
-  Timer? _backendTimer;                 // solo se crea para Main-Game analysis
+  /*───────── Servicios ─────────*/
+  final VideoService     _video     = const VideoService();
+  final PipelineService  _pipeline  = PipelineService.instance;   // ⇦ NUEVO
+  Timer? _backendTimer;
   final List<String> _backendLog = [];
 
-  // ───────── Scaffold / Navegación ─────────
+  /*───────── Navegación ─────────*/
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  static const int _navIndex = 4;       // “Analizar partida (Live)”
+  static const int _navIndex = 4;
 
-  // ────────────────────── init ──────────────────────
+  /*──────────────────── init ────────────────────*/
   @override
   void initState() {
     super.initState();
-    _loadVideo(_currentUrl);            // sin timer al arrancar
+    _loadVideo(_currentUrl);
   }
 
-  // ───────── Cargar vídeo ─────────
+  /*───────── cargar vídeo ─────────*/
   void _loadVideo(String url) {
     final id = YoutubePlayerController.convertUrlToId(url);
     if (id == null) {
@@ -74,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // ───────── Timer periódico (Main-Game) ─────────
+  /*───────── Timer periódico (Main-Game) ─────────*/
   void _startBackendTimer() {
     _backendTimer?.cancel();
     _backendTimer = Timer.periodic(
@@ -97,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _log('⏹ Análisis Main Game detenido');
   }
 
-  // ───────── Utilidades ─────────
+  /*───────── utilidades ─────────*/
   void _log(String line) {
     setState(() {
       _backendLog.insert(0, line);
@@ -107,12 +109,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _updateFrequency(int ms) {
     setState(() => backendFrequencyMs = ms);
-    if (_backendTimer != null) _startBackendTimer();   // reinicia con nueva freq
+    if (_backendTimer != null) _startBackendTimer();
   }
 
   void _openDebugPanel() => _scaffoldKey.currentState?.openEndDrawer();
 
-  // ───────── Callbacks de botones ─────────
+  
+
+  /*───────── callbacks de botones ─────────*/
   Future<void> _handleLoadVideo() async {
     _controller.pauseVideo();
     setState(() => _mostrarVideo = false);
@@ -124,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onSubmit: (url) async {
           _loadVideo(url);
           try {
-            // encolamos un frame inicial (segundo 0) para pre-calentar
+            // pre-calienta el backend con un frame del segundo 0
             await _video.queueFrameExtraction(url, 0);
           } catch (e) {
             _log('❌ $e');
@@ -136,12 +140,29 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _mostrarVideo = true);
   }
 
+  /// ⇨ Botón «Empezar análisis de Champion Select»
   Future<void> _startChampionSelectAnalysis() async {
-    final secs = await _controller.currentTime;
-    _log('🏁 Champion Select @ ${secs.toStringAsFixed(2)} s');
+    final secs   = await _controller.currentTime;
+    final title  = _controller.metadata.title?.trim().isNotEmpty == true
+        ? _controller.metadata.title!
+        : _currentUrl;                      // reserva si no hay título
+
+    final minute = secs ~/ 60;
+    final second = secs.floor() % 60;
+
+    _log('🏁 Champion Select @ ${minute.toString().padLeft(2, '0')}:'
+         '${second.toString().padLeft(2, '0')}  –  “$title”');
+
     try {
-      final res = await _video.extractFrameNow(_currentUrl, secs);
-      _log('✅ Frame inmediato guardado: ${res['file_name']}');
+      final res = await _pipeline.startChampionSelect(
+        matchTitle: title,
+        youtubeUrl: _currentUrl,
+        minute: minute,
+        second: second,
+      );
+      _log('✅ Frame: ${res['frame_file']}');
+      _log('   BLUE: ${res['champions']['blue']}');
+      _log('   RED : ${res['champions']['red']}');
     } catch (e) {
       _log('❌ $e');
     }
@@ -153,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _stopMatchAnalysis() => _stopBackendTimer();
 
-  // ───────── lifecycle ─────────
+  /*───────── lifecycle ─────────*/
   @override
   void dispose() {
     _stopBackendTimer();
@@ -161,13 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  // ───────── UI ─────────
+  /*───────── UI ─────────*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
 
-      // Menú lateral
       drawer: Drawer(
         width: 250,
         child: Align(
@@ -176,7 +196,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // Panel de depuración (con MetaInformación)
       endDrawer: DebugPanel(
         frequencyMs: backendFrequencyMs,
         log: _backendLog,
@@ -199,7 +218,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        // Panel derecho con todos los botones (alineados verticalmente)
         right: Container(
           color: AppColors.leftRighDebug,
           padding: const EdgeInsets.all(16),
@@ -221,12 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: _openDebugPanel,
                 ),
                 const SizedBox(height: 24),
-
-                ElevatedButton(
-                  onPressed: () {/* reservado para futuro */},
-                  child: const Text('Empezar análisis de partida'),
-                ),
-                const SizedBox(height: 12),
 
                 ElevatedButton(
                   onPressed: _startChampionSelectAnalysis,

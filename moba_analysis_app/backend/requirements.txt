@@ -1,0 +1,17 @@
+yt_dlp
+fastapi
+pydantic
+opencv-python
+ffmpeg
+uvicorn
+requests
+pandas
+python-multipart
+mwrogue
+mwclient
+plotly
+Pillow
+bs4
+kaleido
+openpyxl
+pytesseract

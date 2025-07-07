@@ -1,9 +1,0 @@
-yt_dlp
-fastapi
-pydantic
-opencv-python
-ffmpeg
-uvicorn
-requests
-pandas
-python-multipart

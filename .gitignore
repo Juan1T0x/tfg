@@ -1,9 +1,7 @@
-# Ignorar archivos de imagenes y recursos estáticos
-python_backend_legacy/src/assets/images/icons/*
-python_backend_legacy/src/assets/images/loading_screens/*
-python_backend_legacy/src/assets/images/splash_arts/*
-
-moba_analysis_app/backend/assets/images/*
+# Ignorar archivos de imagenes excepto el mapa
+moba_analysis_app/backend/assets/images/icons/*
+moba_analysis_app/backend/assets/images/loading_screens/*
+moba_analysis_app/backend/assets/images/splash_arts/*
 
 # Ignorar todo el contenido de la carpeta results de champion select en el servicio de análisis de partidas en vivo
 moba_analysis_app/backend/services/live_game_analysis/champion_select/results/*

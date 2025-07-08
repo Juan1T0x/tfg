@@ -3,10 +3,6 @@ MOBA Analysis App
 
 The project is an end-to-end toolkit that **scrapes live-game data from League of Legends VODs, stores / visualises the results, and serves them through a REST API plus a Flutter web UI**.
 
-moba_analysis_app/
-├── backend ← FastAPI service + computer-vision & data-science pipeline
-└── frontend ← Flutter web client that consumes the REST API
-
 ---------------------------------------------------------------------------
 1 · Backend (FastAPI + Python)
 ---------------------------------------------------------------------------

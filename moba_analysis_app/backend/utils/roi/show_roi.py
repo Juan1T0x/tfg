@@ -1,198 +1,192 @@
 # -*- coding: utf-8 -*-
 """
-ROI Viewer adaptable a cualquier resolución.
+roi_viewer_normalized
+=====================
 
-Cambios clave frente al script original:
-1. Las plantillas pueden contener:
-   • Coordenadas NORMALIZADAS (valores 0‒1) que ya son independientes de tamaño.
-   • Coordenadas ABSOLUTAS en la resolución de referencia indicada mediante
-     el campo "reference_size": [W_ref, H_ref].
+Small utility that overlays one or more *Region-of-Interest* (ROI) 
+templates on top of a video in real time.  
+The same template can be reused for any resolution because coordinates
+can be expressed either:
 
-2. La función `draw_rois` detecta el tipo de coordenada y escala al vuelo.
-3. `load_templates` no cambia; sólo ignora los campos que no son ROIs.
+* **Normalised** (0–1 range) – already resolution-agnostic.
+* **Absolute** – in the *reference resolution* indicated by the optional
+  field ``"reference_size": [W_ref, H_ref]``.
 
-Uso:
-    python roi_viewer_normalized.py path/al/video.mp4 path/a/plantillas
+During playback:
 
-Atajos mientras se reproduce el vídeo:
-    m – avanza 10 s
-    c – captura frame con ROIs (abre diálogo)
-    q / ESC – salir
+* **m** – skip forward 10 s  
+* **c** – save a PNG/JPEG of the current frame with the ROIs  
+* **q** / **Esc** – quit
+
+Run from the command line:
+
+    python roi_viewer_normalized.py path/to/video.mp4 path/to/templates
 """
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import os
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 import cv2
 import numpy as np
-import json
-import argparse
 import tkinter as tk
 from tkinter import filedialog
-import os
-import glob
-from typing import Dict, List, Tuple
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Utilidades para plantillas
-# ──────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------#
+# Template utilities
+# ---------------------------------------------------------------------------#
 Coordinate = Tuple[float, float]
 Template   = Dict[str, List[Coordinate]]
 
+
 def load_templates(folder: str) -> Dict[str, Template]:
-    """Carga todos los JSON de la carpeta y devuelve {nombre: plantilla}."""
+    """Read every ``*.json`` file in *folder* and return a mapping ``name → template``."""
     templates: Dict[str, Template] = {}
-    pattern = os.path.join(folder, "*.json")
-    for filepath in glob.glob(pattern):
+    for fp in glob.glob(os.path.join(folder, "*.json")):
         try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            name = os.path.splitext(os.path.basename(filepath))[0]
-            templates[name] = data
-        except Exception as e:
-            print(f"⚠️  Error cargando {filepath}: {e}")
+            with open(fp, encoding="utf-8") as f:
+                templates[Path(fp).stem] = json.load(f)
+        except Exception as exc:
+            print(f"⚠️  cannot load {fp}: {exc}")
     return templates
 
 
 def _points_are_normalised(pts: List[Coordinate]) -> bool:
-    """True si TODOS los puntos están en el rango 0‒1."""
+    """Return *True* if *all* points are in the range 0–1."""
     return all(0.0 <= x <= 1.0 and 0.0 <= y <= 1.0 for x, y in pts)
 
 
-def _scale_points(points: List[Coordinate], frame_w: int, frame_h: int,
-                  ref_w: int | None, ref_h: int | None) -> List[Tuple[int, int]]:
-    """Escala la lista de puntos a píxeles para el frame actual."""
-    scaled: List[Tuple[int, int]] = []
+def _scale_points(
+    points: List[Coordinate],
+    frame_w: int,
+    frame_h: int,
+    ref_w: int | None,
+    ref_h: int | None,
+) -> List[Tuple[int, int]]:
+    """
+    Convert *points* to absolute pixel coordinates for the current frame.
 
-    if ref_w and ref_h:  # Coordenadas en píxeles de una resolución de referencia
+    Priority
+    --------
+    1. If *reference_size* is provided → scale from that resolution.
+    2. If points look normalised → scale by current ``frame_w/ frame_h``.
+    3. Otherwise assume the coordinates are already absolute.
+    """
+    if ref_w and ref_h:
         sx, sy = frame_w / ref_w, frame_h / ref_h
-        scaled = [(int(x * sx), int(y * sy)) for x, y in points]
-    elif _points_are_normalised(points):  # Coordenadas normalizadas 0‒1
-        scaled = [(int(x * frame_w), int(y * frame_h)) for x, y in points]
-    else:  # Por compatibilidad: se asume que ya están en píxeles de la resolución actual
-        scaled = [(int(x), int(y)) for x, y in points]
-    return scaled
+        return [(int(x * sx), int(y * sy)) for x, y in points]
+
+    if _points_are_normalised(points):
+        return [(int(x * frame_w), int(y * frame_h)) for x, y in points]
+
+    return [(int(x), int(y)) for x, y in points]
 
 
-def draw_rois(frame, template: Template, colour: tuple[int, int, int] = (0, 255, 0)):
-    """Dibuja los ROIs del *template* y etiqueta cada uno con su clave."""
-    h_frame, w_frame = frame.shape[:2]
-    ref_w, ref_h = None, None
-    if "reference_size" in template:
-        ref_w, ref_h = template["reference_size"]
+def draw_rois(frame: np.ndarray, template: Template,
+              colour: Tuple[int, int, int] = (0, 255, 0)) -> np.ndarray:
+    """Draw every ROI found in *template* on *frame* and label it with its key."""
+    h, w = frame.shape[:2]
+    ref_w, ref_h = template.get("reference_size", (None, None))
 
-    font       = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 0.5
-    thickness  = 1
+    font, fscale, thick = cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1
 
-    for roi_key, points in template.items():
-        if roi_key == "reference_size":
+    for key, pts in template.items():
+        if key == "reference_size":
             continue
 
-        # 1) Escalado al tamaño del frame
-        abs_pts = _scale_points(points, w_frame, h_frame, ref_w, ref_h)
-        pts     = np.array(abs_pts, np.int32).reshape((-1,1,2))
+        abs_pts = _scale_points(pts, w, h, ref_w, ref_h)
+        cv2.polylines(frame, [np.array(abs_pts, np.int32)], True, colour, 2)
 
-        # 2) Dibujar la polilínea
-        cv2.polylines(frame, [pts], isClosed=True, color=colour, thickness=2)
-
-        # 3) Calcular bounding-box para colocar el texto
-        xs = [p[0] for p in abs_pts]
-        ys = [p[1] for p in abs_pts]
+        # Bounding-box to position the label
+        xs, ys = zip(*abs_pts)
         x0, y0 = min(xs), min(ys)
 
-        # 4) Ajustar posición del texto por si no cabe arriba
-        (tw, th), _ = cv2.getTextSize(roi_key, font, font_scale, thickness)
-        ty = y0 - 5
-        if ty - th < 0:
-            ty = y0 + th + 5
+        (tw, th), _ = cv2.getTextSize(key, font, fscale, thick)
+        ty = y0 - 5 if y0 - th - 5 >= 0 else y0 + th + 5
 
-        # 5) Dibujar fondo semitransparente para legibilidad
+        # Semi-transparent background for better readability
         overlay = frame.copy()
-        cv2.rectangle(overlay, (x0, ty-th-2), (x0+tw+4, ty+2), (0,0,0), -1)
-        alpha = 0.6
-        cv2.addWeighted(overlay, alpha, frame, 1-alpha, 0, frame)
+        cv2.rectangle(overlay, (x0, ty - th - 2), (x0 + tw + 4, ty + 2), (0, 0, 0), -1)
+        cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
 
-        # 6) Poner el texto con el nombre del ROI
-        cv2.putText(frame, roi_key, (x0+2, ty),
-                    font, font_scale, (255,255,255), thickness, cv2.LINE_AA)
-
+        cv2.putText(frame, key, (x0 + 2, ty), font, fscale, (255, 255, 255), thick,
+                    cv2.LINE_AA)
     return frame
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# GUI / Reproductor principal
-# ──────────────────────────────────────────────────────────────────────────────
-
-def main():
-    parser = argparse.ArgumentParser(description="Mostrar ROIs sobre un vídeo con plantillas independientes de resolución.")
-    parser.add_argument("video_path", help="Ruta al vídeo")
-    parser.add_argument("json_folder", help="Carpeta con plantillas JSON")
+# ---------------------------------------------------------------------------#
+# Main player
+# ---------------------------------------------------------------------------#
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Overlay ROI templates (normalised or absolute) on a video."
+    )
+    parser.add_argument("video_path",  help="Path to the video file")
+    parser.add_argument("json_folder", help="Folder containing *.json templates")
     args = parser.parse_args()
 
-    # Cargar plantillas
     templates = load_templates(args.json_folder)
     if not templates:
-        print("❌ No se encontraron plantillas JSON en la carpeta especificada.")
+        print("❌ No JSON templates found in the given folder.")
         return
 
-    template_names = list(templates.keys())
+    template_names = list(templates)
     current_template: Template = templates[template_names[0]]
 
-    # Tkinter (selección de plantilla)
+    # Simple Tk drop-down to choose the active template
     root = tk.Tk()
-    root.title("Seleccionar plantilla de ROIs")
-    tk.Label(root, text="Plantilla:").pack(side=tk.LEFT, padx=5, pady=5)
+    root.title("ROI template selector")
+    tk.Label(root, text="Template:").pack(side=tk.LEFT, padx=5, pady=5)
 
-    sel_var = tk.StringVar(root, value=template_names[0])
-    dropdown = tk.OptionMenu(root, sel_var, *template_names)
-    dropdown.pack(side=tk.LEFT, padx=5, pady=5)
+    sel_var = tk.StringVar(root, template_names[0])
+    tk.OptionMenu(root, sel_var, *template_names).pack(side=tk.LEFT, padx=5, pady=5)
 
-    def on_change(*_):
+    def _change(*_) -> None:
         nonlocal current_template
-        name = sel_var.get()
-        if name in templates:
-            current_template = templates[name]
-    sel_var.trace_add("write", on_change)
+        current_template = templates[sel_var.get()]
 
-    # CV2 vídeo
+    sel_var.trace_add("write", _change)
+
     cap = cv2.VideoCapture(args.video_path)
     if not cap.isOpened():
-        print("❌ No se pudo abrir el vídeo.")
+        print("❌ Unable to open video.")
         root.destroy()
         return
 
-    window_name = "Video  •  m: +10 s   c: captura   q/ESC: salir"
-    cv2.namedWindow(window_name)
+    win = "Video  |  m: +10 s   c: capture   q/ESC: quit"
+    cv2.namedWindow(win)
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
-        if current_template:
-            frame = draw_rois(frame, current_template)
-
-        cv2.imshow(window_name, frame)
+        frame = draw_rois(frame, current_template)
+        cv2.imshow(win, frame)
 
         key = cv2.waitKey(30) & 0xFF
-        if key == ord("m"):
-            # Avanza 10 s (10 000 ms)
-            pos = cap.get(cv2.CAP_PROP_POS_MSEC) + 10_000
-            cap.set(cv2.CAP_PROP_POS_MSEC, pos)
-        elif key == ord("c"):
-            # Guarda captura
-            tmp = tk.Tk(); tmp.withdraw()
+        if key == ord("m"):                              # +10 s
+            cap.set(cv2.CAP_PROP_POS_MSEC,
+                    cap.get(cv2.CAP_PROP_POS_MSEC) + 10_000)
+        elif key == ord("c"):                            # save frame
+            dlg = tk.Tk(); dlg.withdraw()
             fname = filedialog.asksaveasfilename(
                 defaultextension=".png",
-                title="Guardar captura",
-                filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg"), ("Todos", "*.*")],
+                title="Save frame",
+                filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg"), ("All", "*.*")],
             )
-            tmp.destroy()
+            dlg.destroy()
             if fname:
                 cv2.imwrite(fname, frame)
-                print(f"✔️  Captura guardada en {fname}")
-        elif key in (ord("q"), 27):
+                print(f"✔ Saved to {fname}")
+        elif key in (ord("q"), 27):                      # quit
             break
 
-        root.update()  # mantiene el dropdown responsivo
+        root.update()
 
     cap.release()
     cv2.destroyAllWindows()

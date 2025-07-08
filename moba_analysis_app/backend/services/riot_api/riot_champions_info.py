@@ -1,13 +1,32 @@
-# services/riot_api/riot_champions_info.py
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-Actualiza la tabla **champions** con la última información de Riot.
-• Tabla: champions(champion_id PK, champion_name, roles, …stats)
-• Ruta : backend/assets/db/moba_analysis.sqlite
+services.riot_api.riot_champions_info
+-------------------------------------
+
+Keeps table **champions** inside *assets/db/moba_analysis.sqlite*
+fully-synced with the latest Data-Dragon metadata.
+
+Main entry-point
+~~~~~~~~~~~~~~~~
+>>> from services.riot_api.riot_champions_info import update_champions_db
+>>> update_champions_db("14.6.1")      # returns number of rows touched
+402
+
+Public helpers
+~~~~~~~~~~~~~~
+* :func:`get_champion_names`
+* :func:`get_champion_names_and_classes`
+* :func:`get_champions`
+* :func:`roles_of_champion`
+* :func:`champions_with_roles`
 """
 
 from __future__ import annotations
 
+import re
 import sqlite3
+import unicodedata
 from pathlib import Path
 from typing import Any, List, Tuple
 
@@ -17,219 +36,190 @@ import requests
 
 from .riot_versions import get_latest_version
 
-DB_OUT = (
-    Path(__file__).resolve().parents[2]
-    / "assets"
-    / "db"
-    / "moba_analysis.sqlite"
-)
-TABLE = "champions"
+# --------------------------------------------------------------------------- #
+# Database path / constants                                                   #
+# --------------------------------------------------------------------------- #
+_DB: Path   = Path(__file__).resolve().parents[2] / "assets" / "db" / "moba_analysis.sqlite"
+_TABLE: str = "champions"
 
-
-# ─────────────────── descarga y pre-procesado ──────────────────
-def fetch_dataframe(version: str) -> pd.DataFrame:
-    url = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion.json"
-    champs = requests.get(url, timeout=15).json()["data"]
+# --------------------------------------------------------------------------- #
+# Data-Dragon fetch / pre-processing                                          #
+# --------------------------------------------------------------------------- #
+def _fetch_dataframe(version: str) -> pd.DataFrame:
+    """
+    Download champion JSON for *version* and return a tidy :class:`pandas.DataFrame`.
+    """
+    url  = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion.json"
+    data = requests.get(url, timeout=15).json()["data"]
 
     rows: list[dict[str, Any]] = []
-    for c in champs.values():
+    for champ in data.values():
         rows.append(
             {
-                "champion_id": int(c["key"]),
-                "champion_name": c["name"],
-                "roles": ", ".join(c["tags"]),
-                **c["stats"],
+                "champion_id"  : int(champ["key"]),
+                "champion_name": champ["name"],
+                "roles"        : ", ".join(champ["tags"]),
+                **champ["stats"],
             }
         )
     return pd.DataFrame(rows).sort_values("champion_name")
 
-
-# ─────────────────────── tabla y UPSERT ────────────────────────
-def _create_table_if_needed(conn: sqlite3.Connection) -> None:
-    """Crea la tabla si no existe (solo se llama una vez)."""
+# --------------------------------------------------------------------------- #
+# Table creation / UPSERT                                                     #
+# --------------------------------------------------------------------------- #
+def _create_table(conn: sqlite3.Connection) -> None:
     conn.execute(
         f"""
-        CREATE TABLE IF NOT EXISTS {TABLE} (
-            champion_id   INTEGER PRIMARY KEY,
-            champion_name TEXT,
-            roles         TEXT,
-            hp            REAL,
-            hpperlevel    REAL,
-            mp            REAL,
-            mpperlevel    REAL,
-            movespeed     REAL,
-            armor         REAL,
-            armorperlevel REAL,
-            spellblock    REAL,
-            spellblockperlevel REAL,
-            attackrange   REAL,
-            hpregen       REAL,
-            hpregenperlevel REAL,
-            mpregen       REAL,
-            mpregenperlevel REAL,
-            crit          REAL,
-            critperlevel  REAL,
-            attackdamage  REAL,
-            attackdamageperlevel REAL,
-            attackspeedperlevel REAL,
-            attackspeed   REAL
+        CREATE TABLE IF NOT EXISTS {_TABLE} (
+            champion_id            INTEGER PRIMARY KEY,
+            champion_name          TEXT,
+            roles                  TEXT,
+            hp                     REAL,
+            hpperlevel             REAL,
+            mp                     REAL,
+            mpperlevel             REAL,
+            movespeed              REAL,
+            armor                  REAL,
+            armorperlevel          REAL,
+            spellblock             REAL,
+            spellblockperlevel     REAL,
+            attackrange            REAL,
+            hpregen                REAL,
+            hpregenperlevel        REAL,
+            mpregen                REAL,
+            mpregenperlevel        REAL,
+            crit                   REAL,
+            critperlevel           REAL,
+            attackdamage           REAL,
+            attackdamageperlevel   REAL,
+            attackspeedperlevel    REAL,
+            attackspeed            REAL
         )
         """
     )
 
+def _py(v: Any) -> Any:
+    """Convert Numpy scalars to plain Python for SQLite."""
+    if isinstance(v, (np.integer,)):
+        return int(v)
+    if isinstance(v, (np.floating,)):
+        return float(v)
+    return v
 
-def _py_cast(x: Any) -> Any:
-    """Convierte numpy types a nativos Python para SQLite."""
-    if isinstance(x, (np.integer,)):
-        return int(x)
-    if isinstance(x, (np.floating,)):
-        return float(x)
-    return x
+def _upsert(df: pd.DataFrame) -> int:
+    with sqlite3.connect(_DB) as conn:
+        _create_table(conn)
 
-
-def upsert_sqlite(df: pd.DataFrame) -> int:
-    with sqlite3.connect(DB_OUT) as conn:
-        _create_table_if_needed(conn)
-
-        cols = df.columns.tolist()
+        cols         = df.columns.tolist()
         placeholders = ", ".join("?" * len(cols))
-        updates = ", ".join(f"{c}=excluded.{c}" for c in cols if c != "champion_id")
+        updates      = ", ".join(f"{c}=excluded.{c}" for c in cols if c != "champion_id")
 
         sql = (
-            f"INSERT INTO {TABLE} ({', '.join(cols)}) "
+            f"INSERT INTO {_TABLE} ({', '.join(cols)}) "
             f"VALUES ({placeholders}) "
             f"ON CONFLICT(champion_id) DO UPDATE SET {updates}"
         )
 
         before = conn.total_changes
-        tuples = [
-            tuple(_py_cast(v) for v in row)
-            for row in df.itertuples(index=False, name=None)
-        ]
-        conn.executemany(sql, tuples)
+        rows   = [tuple(_py(v) for v in r) for r in df.itertuples(index=False, name=None)]
+        conn.executemany(sql, rows)
         conn.commit()
-        changed = conn.total_changes - before          # filas realmente afectadas
 
-    if changed:
-        print(f"✔ Champions insertados/actualizados: {changed}")
-    else:
-        print("✔ Tabla champions ya al día.")
+        return conn.total_changes - before
+
+# --------------------------------------------------------------------------- #
+# Public sync helper                                                          #
+# --------------------------------------------------------------------------- #
+def update_champions_db(version: str | None = None) -> int:
+    """
+    Ensure table **champions** is up-to-date.
+
+    Parameters
+    ----------
+    version :
+        Data-Dragon version.  When *None*, latest live version is resolved.
+
+    Returns
+    -------
+    int
+        Number of rows inserted or updated.
+    """
+    if version is None:
+        version = get_latest_version()
+    df = _fetch_dataframe(version)
+    changed = _upsert(df)
+
+    msg = "Tabla champions ya al día." if changed == 0 else f"Champions insertados/actualizados: {changed}"
+    print(f"✔ {msg}")
     return changed
 
-
-# ──────────────────────── API helper ───────────────────────────
-def update_champions_db(version: str) -> int:
-    """Descarga la info y realiza upsert; devuelve nº de filas procesadas."""
-    df = fetch_dataframe(version)
-    return upsert_sqlite(df)
-
-# ────────────────────────── CONSULTAS ──────────────────────────
-def _open_conn() -> sqlite3.Connection:
-    
-    """Conexión helper en modo row dict + foreign keys."""
-    conn = sqlite3.connect(DB_OUT)
+# --------------------------------------------------------------------------- #
+# Read helpers                                                                #
+# --------------------------------------------------------------------------- #
+def _conn() -> sqlite3.Connection:
+    conn = sqlite3.connect(_DB)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
-
-def get_champion_names(version: str) -> List[str]:
-
-    # Primero actualizamos la tabla con la última info.
+def get_champion_names(version: str | None = None) -> List[str]:
     update_champions_db(version)
-
-    """
-    Devuelve TODOS los nombres (orden alfabético) existentes en la tabla.
-    """
-    with _open_conn() as conn:
-        rows = conn.execute(
-            f"SELECT champion_name FROM {TABLE} ORDER BY champion_name ASC"
-        ).fetchall()
+    with _conn() as c:
+        rows = c.execute(f"SELECT champion_name FROM {_TABLE} ORDER BY champion_name").fetchall()
     return [r["champion_name"] for r in rows]
 
-
-def get_champion_names_and_classes(version: str) -> List[Tuple[str, str]]:
-
-
-    # Primero actualizamos la tabla con la última info.
+def get_champion_names_and_classes(version: str | None = None) -> List[Tuple[str, str]]:
     update_champions_db(version)
-
-    """
-    Devuelve [(name, roles), …] ordenados alfabéticamente.
-    `roles` es el contenido literal de la columna `roles`
-    (p.ej. 'Mage, Assassin').
-    """
-    with _open_conn() as conn:
-        rows = conn.execute(
-            f"SELECT champion_name, roles FROM {TABLE} ORDER BY champion_name ASC"
-        ).fetchall()
+    with _conn() as c:
+        rows = c.execute(f"SELECT champion_name, roles FROM {_TABLE} ORDER BY champion_name").fetchall()
     return [(r["champion_name"], r["roles"]) for r in rows]
 
-def get_champions(version: str) -> List[dict]:
-    """
-    Devuelve TODA la tabla champions como lista de dicts
-    (se asegura antes de que esté actualizada).
-    """
-    update_champions_db(version)                # refresca si es necesario
-    with _open_conn() as conn:
-        rows = conn.execute(f"SELECT * FROM {TABLE}").fetchall()
+def get_champions(version: str | None = None) -> List[dict]:
+    update_champions_db(version)
+    with _conn() as c:
+        rows = c.execute(f"SELECT * FROM {_TABLE}").fetchall()
     return [dict(r) for r in rows]
 
-def roles_of_champion(champion_name: str, version: str) -> str | None:
-    """
-    Devuelve la cadena `roles` del campeón indicado (p.ej. "Mage, Assassin").
-    Si no existe, retorna **None**.
-    """
+def roles_of_champion(name: str, version: str | None = None) -> str | None:
     update_champions_db(version)
-    with _open_conn() as conn:
-        row = conn.execute(
-            f"""
-            SELECT roles
-              FROM {TABLE}
-             WHERE lower(champion_name)=lower(?)
-             LIMIT 1
-            """,
-            (champion_name,),
+    with _conn() as c:
+        row = c.execute(
+            f"SELECT roles FROM {_TABLE} WHERE lower(champion_name)=lower(?) LIMIT 1",
+            (name,),
         ).fetchone()
     return None if row is None else row["roles"]
 
-def _normalize(s: str) -> str:
-    """Lower-case y sin espacios para comparaciones robustas."""
-    return s.replace(" ", "").lower()
+# --------------------------------------------------------------------------- #
+# Role-lookup helper                                                          #
+# --------------------------------------------------------------------------- #
+def _norm(s: str) -> str:
+    return re.sub(r"\s+", "", unicodedata.normalize("NFKD", s)).lower()
 
-def champions_with_roles(
-    roles_query: str,
-    version: str,
-) -> List[str]:
+def champions_with_roles(roles_query: str, version: str | None = None) -> List[str]:
     """
-    Devuelve los nombres de campeones cuyo campo **roles**
-    coincide *exactamente* con `roles_query` (misma secuencia).
+    Exact‐match search on the *roles* column.
 
-    • `roles_query` debe ir con la misma notación que Riot:
-         "Fighter"              → sólo los de 1 rol Fighter
-         "Marksman, Mage"       → exactamente esos dos y en ese orden
+    Examples
+    --------
+    >>> champions_with_roles("Fighter")
+    >>> champions_with_roles("Marksman, Mage")
     """
-    roles_query_norm = _normalize(roles_query)
+    rq = _norm(roles_query)
     update_champions_db(version)
 
-    with _open_conn() as conn:
-        rows = conn.execute(f"SELECT champion_name, roles FROM {TABLE}").fetchall()
+    with _conn() as c:
+        rows = c.execute(f"SELECT champion_name, roles FROM {_TABLE}").fetchall()
 
-    return [
-        r["champion_name"]
-        for r in rows
-        if _normalize(r["roles"]) == roles_query_norm
-    ]
+    return [r["champion_name"] for r in rows if _norm(r["roles"]) == rq]
 
-
-# ───────────────────────── CLI/debug ───────────────────────────
+# --------------------------------------------------------------------------- #
+# CLI / debug                                                                 #
+# --------------------------------------------------------------------------- #
 def main() -> None:
     version = get_latest_version()
-    print(f"🌍 Última versión Riot: {version}")
-
-    rows = update_champions_db(version)
-    print(f"✔ Champions actualizados/insertados: {rows}")
-
+    print(f"🌍 Versión Riot más reciente: {version}")
+    changed = update_champions_db(version)
+    print(f"✔ Champions insertados/actualizados: {changed}")
 
 if __name__ == "__main__":
     main()

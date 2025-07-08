@@ -1,25 +1,42 @@
 #!/usr/bin/env python3
-# template_matcher_with_ranking_scaled.py
+# -*- coding: utf-8 -*-
 """
-Template-matching sobre champion-select con generación de evidencias y
-medición de tiempos.
+Champion-Template Matcher
+=========================
 
-• Escala los ROIs al tamaño real del screenshot.
-• Calcula el ranking top-1 / top-5 para detector × estrategia × fuente.
-• Guarda las 5 mejores comparaciones por ROI en:
+End-to-end benchmark for different feature detectors and resize strategies when
+matching champion portraits in a *champ-select* screenshot.
 
-    results/<fuente>/<detector>/<estrategia>/<campeón_gt>/<pred>.png
-• Registra en log el tiempo total empleado por cada combinación.
+The script:
+
+1. Splits the champion rows (5 × blue + 5 × red) using a ROI template.
+2. Runs every combination of:
+      • detector  – {SIFT, ORB, … all available in OpenCV}
+      • strategy  – bbox / DB resizing (see `RESIZE_SETTINGS`)
+      • source    – icons, loading screens, splash arts
+3. Measures *top-1* and *top-5* accuracy against a fixed ground-truth as well
+   as the total processing time.
+4. Saves visual match evidence under *results/<source>/<detector>/<strategy>/*.
+5. Writes a sortable ranking to *results/matching_ranking.log*.
+
+Adjust `GROUND_TRUTH`, the screenshot path, and template folder as needed.
 """
+
 from __future__ import annotations
-import os, glob, json, time
+
+import glob
+import json
+import os
+import time
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import cv2
 import numpy as np
 
-# ───────────────────────────── Configuración ────────────────────────────
+# --------------------------------------------------------------------------- #
+# Configuration                                                               #
+# --------------------------------------------------------------------------- #
 BASE_DIR    = Path(__file__).parent
 OUTPUT_ROOT = BASE_DIR / "results"
 LOG_PATH    = OUTPUT_ROOT / "matching_ranking.log"
@@ -29,6 +46,7 @@ GROUND_TRUTH = {
     "red":  ["ambessa", "vi", "ahri", "xayah", "rakan"],
 }
 
+# (resize_bbox, resize_db, label)
 RESIZE_SETTINGS = [
     (True,  False, "resize_bbox_only"),
     (False, True,  "resize_db_only"),
@@ -36,185 +54,219 @@ RESIZE_SETTINGS = [
     (False, False, "resize_none"),
 ]
 
-# ───────────────────────── Utilidades ROIs ──────────────────────────────
+# --------------------------------------------------------------------------- #
+# ROI helpers                                                                 #
+# --------------------------------------------------------------------------- #
 Coordinate = Tuple[float, float]
 Template   = Dict[str, List[Coordinate]]
 
-def scale_points(points: List[Coordinate], fw: int, fh: int,
-                 ref_size: Tuple[int, int] | None):
-    if all(0 <= x <= 1 and 0 <= y <= 1 for x, y in points):
-        return [(int(x * fw), int(y * fh)) for x, y in points]
-    if ref_size is not None:
+def scale_points(
+    pts: List[Coordinate], fw: int, fh: int,
+    ref_size: Tuple[int, int] | None,
+) -> List[Tuple[int, int]]:
+    """Return the points in *absolute* pixels for the current frame size."""
+    if all(0 <= x <= 1 and 0 <= y <= 1 for x, y in pts):
+        return [(int(x * fw), int(y * fh)) for x, y in pts]
+    if ref_size:
         rw, rh = ref_size
         sx, sy = fw / rw, fh / rh
-        return [(int(x * sx), int(y * sy)) for x, y in points]
-    return [(int(x), int(y)) for x, y in points]
+        return [(int(x * sx), int(y * sy)) for x, y in pts]
+    return [(int(x), int(y)) for x, y in pts]
 
-def get_scaled_rois(tpl: Template, fw: int, fh: int):
+def _bbox(pts: List[Tuple[int, int]]) -> Tuple[int, int, int, int]:
+    xs, ys = zip(*pts)
+    return min(xs), min(ys), max(xs), max(ys)
+
+def get_scaled_rois(tpl: Template, fw: int, fh: int
+) -> Tuple[Tuple[int, int, int, int], Tuple[int, int, int, int]]:
+    """Return bounding boxes for blue and red champion rows."""
     ref = tpl.get("reference_size")
-    def bbox(pts): xs, ys = zip(*pts); return min(xs), min(ys), max(xs), max(ys)
-    b1 = bbox(scale_points(tpl["team1ChampionsRoi"], fw, fh, ref))
-    b2 = bbox(scale_points(tpl["team2ChampionsRoi"], fw, fh, ref))
+    b1 = _bbox(scale_points(tpl["team1ChampionsRoi"], fw, fh, ref))
+    b2 = _bbox(scale_points(tpl["team2ChampionsRoi"], fw, fh, ref))
     return b1, b2
 
-def subdivide_roi(bbox, n=5):
-    x1, y1, x2, y2 = bbox
+def subdivide_roi(box: Tuple[int, int, int, int], n: int = 5
+) -> List[Tuple[int, int, int, int]]:
+    """Split *box* into *n* equal rectangles (left→right)."""
+    x1, y1, x2, y2 = box
     step = (x2 - x1) // n
-    return [(x1 + i*step, y1,
-             x1 + (i+1)*step if i < n-1 else x2, y2) for i in range(n)]
+    return [
+        (x1 + i * step, y1,
+         x1 + (i + 1) * step if i < n - 1 else x2, y2)
+        for i in range(n)
+    ]
 
-def load_roi_templates(folder: str):
-    return {Path(fp).stem: json.load(open(fp, encoding="utf-8"))
-            for fp in glob.glob(os.path.join(folder, "*.json"))}
+def load_roi_templates(folder: str) -> Dict[str, Template]:
+    """Load every *.json* in *folder* into ``{name: template}``."""
+    out: Dict[str, Template] = {}
+    for fp in glob.glob(os.path.join(folder, "*.json")):
+        try:
+            out[Path(fp).stem] = json.loads(Path(fp).read_text(encoding="utf-8"))
+        except Exception as exc:
+            print(f"⚠ Error loading {fp}: {exc}")
+    return out
 
-# ───────────────────── Assets & detectores ──────────────────────────────
-def normalize_name(n: str) -> str:
-    return n.lower().split("_")[0]
+# --------------------------------------------------------------------------- #
+# Reference artwork & detectors                                               #
+# --------------------------------------------------------------------------- #
+def normalize_name(fname: str) -> str:
+    """'Ahri_splash' → 'ahri'."""
+    return fname.lower().split("_")[0]
 
-def load_champion_images(folder: str):
-    imgs = {}
+def load_champion_images(folder: str) -> Dict[str, np.ndarray]:
+    """Return {champion_key → BGR image} for every file in *folder*."""
+    out: Dict[str, np.ndarray] = {}
     for fp in glob.glob(os.path.join(folder, "*")):
         if fp.lower().endswith((".png", ".jpg", ".jpeg")):
-            name = normalize_name(Path(fp).stem)
-            im   = cv2.imread(fp)
-            if im is not None:
-                imgs[name] = im
-    return imgs
+            img = cv2.imread(fp)
+            if img is not None:
+                out[normalize_name(Path(fp).stem)] = img
+    return out
 
-def resize_if_needed(img, flag):
+def resize_if(img: np.ndarray, flag: bool) -> np.ndarray:
     return cv2.resize(img, (100, 100)) if flag else img
 
-def create_detectors():
-    det = {}
+def create_detectors() -> Dict[str, cv2.Feature2D]:
+    """Instantiate every detector available in this OpenCV build."""
+    det: Dict[str, cv2.Feature2D] = {}
     if hasattr(cv2, "SIFT_create"):  det["SIFT"]  = cv2.SIFT_create()
     if hasattr(cv2, "ORB_create"):   det["ORB"]   = cv2.ORB_create()
     if hasattr(cv2, "AKAZE_create"): det["AKAZE"] = cv2.AKAZE_create()
     if hasattr(cv2, "BRISK_create"): det["BRISK"] = cv2.BRISK_create()
     if hasattr(cv2, "KAZE_create"):  det["KAZE"]  = cv2.KAZE_create()
     try:
-        det["SURF"] = cv2.xfeatures2d.SURF_create()
+        det["SURF"] = cv2.xfeatures2d.SURF_create()          # type: ignore[attr-defined]
     except Exception:
         pass
     return det
 
-# ────────── Safe matching (devuelve good matches opcionalmente) ─────────
-def extract_and_match(det_name: str, detector, query, targets, *, want_matches=False):
+# --------------------------------------------------------------------------- #
+# Matching                                                                    #
+# --------------------------------------------------------------------------- #
+def extract_and_match(
+    det_name: str,
+    detector: cv2.Feature2D,
+    query: np.ndarray,
+    targets: Dict[str, np.ndarray],
+    *,
+    want_matches: bool = False,
+) -> List[Tuple[str, int, list | None, list | None]]:
+    """
+    Return the best *≤5* matches sorted by number of good correspondences.
+
+    If *want_matches* is True the raw good matches and kp_t are also returned
+    for later visualisation.
+    """
     kp_q, des_q = detector.detectAndCompute(query, None)
     if des_q is None or not kp_q:
         return []
+
     norm = cv2.NORM_L2 if det_name in ("SIFT", "SURF", "KAZE") else cv2.NORM_HAMMING
-    bf   = cv2.BFMatcher(norm)
-    out  = []
+    matcher = cv2.BFMatcher(norm)
+
+    results: List[Tuple[str, int, list | None, list | None]] = []
     for name, img in targets.items():
         kp_t, des_t = detector.detectAndCompute(img, None)
         if des_t is None or not kp_t:
             continue
         try:
-            pairs = bf.knnMatch(des_q, des_t, k=2)
+            pairs = matcher.knnMatch(des_q, des_t, k=2)
         except cv2.error:
             continue
-        good = []
-        for pair in pairs:
-            if len(pair) < 2:
-                continue
-            m, n = pair
-            if m.distance < 0.75 * n.distance:
-                good.append(m)
+        good = [m for m, n in (p for p in pairs if len(p) == 2) if m.distance < 0.75 * n.distance]
         if good:
-            out.append((name, len(good), good if want_matches else None, kp_t))
-    return sorted(out, key=lambda x: x[1], reverse=True)[:5]
+            results.append((name, len(good), good if want_matches else None, kp_t))
 
-# ────────────────────────── Programa principal ──────────────────────────
-def main():
+    return sorted(results, key=lambda x: x[1], reverse=True)[:5]
+
+# --------------------------------------------------------------------------- #
+# Main benchmark loop                                                         #
+# --------------------------------------------------------------------------- #
+def main() -> None:
     OUTPUT_ROOT.mkdir(exist_ok=True)
+
     screenshot = cv2.imread("screenshot.png")
     if screenshot is None:
-        raise FileNotFoundError("screenshot.png no encontrado")
+        raise FileNotFoundError("screenshot.png not found")
     H, W = screenshot.shape[:2]
 
-    templates = load_roi_templates("../roi_templates")
-    tpl = templates["champ_select_rois"]
-
-    b1, b2 = get_scaled_rois(tpl, W, H)
-    boxes  = subdivide_roi(b1, 5) + subdivide_roi(b2, 5)
-    gt     = GROUND_TRUTH["blue"] + GROUND_TRUTH["red"]
+    tpl = load_roi_templates("../roi_templates")["champ_select_rois"]
+    b_blue, b_red = get_scaled_rois(tpl, W, H)
+    boxes = subdivide_roi(b_blue) + subdivide_roi(b_red)
+    gt    = GROUND_TRUTH["blue"] + GROUND_TRUTH["red"]
 
     detectors = create_detectors()
-    sources   = {
+    sources = {
         "icons":           load_champion_images("../../assets/images/icons"),
         "loading_screens": load_champion_images("../../assets/images/loading_screens"),
         "splash_arts":     load_champion_images("../../assets/images/splash_arts"),
     }
 
-    detailed: List[Tuple[str, str, str, int, int, float]] = []
+    ranking: List[Tuple[str, str, str, int, int, float]] = []
 
-    # ─── bucle fuentes/estrategias/detectores ───────────────────────────
-    for src_name, champ_imgs_full in sources.items():
-        print(f"\n=== Fuente: {src_name} ===")
+    for src_name, full_db in sources.items():
+        print(f"\n=== Source: {src_name} ===")
         for resize_bbox, resize_db, strat in RESIZE_SETTINGS:
-            print(f"\n  Estrategia: {strat}")
-            champ_imgs = {n: resize_if_needed(im, resize_db)
-                          for n, im in champ_imgs_full.items()}
+            print(f"\n  Strategy: {strat}")
+            db = {k: resize_if(v, resize_db) for k, v in full_db.items()}
 
             scores = {d: {"top1": 0, "top5": 0} for d in detectors}
             times  = {d: 0.0 for d in detectors}
 
             for idx, (x1, y1, x2, y2) in enumerate(boxes):
-                if idx >= len(gt):
-                    break
                 target = gt[idx]
-                patch  = resize_if_needed(screenshot[y1:y2, x1:x2], resize_bbox)
+                patch  = resize_if(screenshot[y1:y2, x1:x2], resize_bbox)
 
                 for det_name, det in detectors.items():
                     t0 = time.perf_counter()
-                    preds = extract_and_match(det_name, det, patch,
-                                              champ_imgs, want_matches=False)
+                    preds = extract_and_match(det_name, det, patch, db)
                     times[det_name] += time.perf_counter() - t0
 
-                    pred_names = [p[0] for p in preds]
-                    if pred_names:
-                        if pred_names[0] == target:
+                    names = [p[0] for p in preds]
+                    if names:
+                        if names[0] == target:
                             scores[det_name]["top1"] += 1
-                        if target in pred_names:
+                        if target in names:
                             scores[det_name]["top5"] += 1
 
-                    # ─── evidencias visuales ─────────────────────────
-                    out_base = (OUTPUT_ROOT / src_name / det_name.lower() /
-                                strat / target)
-                    out_base.mkdir(parents=True, exist_ok=True)
-
-                    preds_full = extract_and_match(det_name, det, patch,
-                                                   champ_imgs, want_matches=True)
+                    # save visual evidence
+                    out_dir = OUTPUT_ROOT / src_name / det_name.lower() / strat / target
+                    out_dir.mkdir(parents=True, exist_ok=True)
+                    detailed = extract_and_match(det_name, det, patch, db, want_matches=True)
                     kp_q, _ = det.detectAndCompute(patch, None)
-                    for rank, (cand, _, good, kp_t) in enumerate(preds_full, 1):
-                        ref_img = champ_imgs[cand]
-                        vis = cv2.drawMatches(patch, kp_q,
-                                              ref_img, kp_t,
-                                              good or [], None,
-                                              flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-                        cv2.imwrite(str(out_base / f"{cand}_{rank}.png"), vis)
+                    for rank, (cand, _, good, kp_t) in enumerate(detailed, 1):
+                        vis = cv2.drawMatches(
+                            patch, kp_q,
+                            db[cand], kp_t,
+                            good or [], None,
+                            flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS,
+                        )
+                        cv2.imwrite(str(out_dir / f"{cand}_{rank}.png"), vis)
 
-            # ─── métricas y tiempo ────────────────────────────────────
             for det_name, sc in scores.items():
                 t_sec = times[det_name]
-                print(f"    {det_name}: top1={sc['top1']:<2} "
+                print(f"    {det_name:<6}: top1={sc['top1']:<2} "
                       f"top5={sc['top5']:<2}  t={t_sec:6.3f}s")
-                detailed.append((src_name, strat, det_name,
-                                 sc["top1"], sc["top5"], t_sec))
+                ranking.append((src_name, strat, det_name,
+                                sc["top1"], sc["top5"], t_sec))
 
-    # ─── ranking global — log -------------------------------------------
-    detailed.sort(key=lambda x: (x[3], x[4]), reverse=True)
+    # ------------------------------------------------------------------- #
+    # Global ranking                                                      #
+    # ------------------------------------------------------------------- #
+    ranking.sort(key=lambda x: (x[3], x[4]), reverse=True)  # by top1, then top5
     with LOG_PATH.open("w", encoding="utf-8") as log:
-        header = "fuente | estrategia | detector : top1, top5, tiempo(s)\n"
-        print("\n=== Ranking global ===\n")
-        log.write(header)
-        for i, (src, strat, det, t1, t5, t) in enumerate(detailed, 1):
-            line = f"{i:2d}. {src} | {strat} | {det}: {t1},{t5}, {t:.3f}"
+        hdr = "source | strategy | detector : top1  top5  time(s)\n"
+        print("\n=== Global ranking ===\n")
+        log.write(hdr)
+        for i, (src, strat, det, t1, t5, t) in enumerate(ranking, 1):
+            line = f"{i:2d}. {src} | {strat} | {det:<6}: {t1:<3} {t5:<3} {t:6.3f}"
             print(line)
             log.write(line + "\n")
 
-    print(f"\n✔ Evidencias y ranking guardados en: {OUTPUT_ROOT.resolve()}")
+    print(f"\n✔ Results saved under: {OUTPUT_ROOT.resolve()}")
 
-
+# --------------------------------------------------------------------------- #
+# Entry-point                                                                 #
+# --------------------------------------------------------------------------- #
 if __name__ == "__main__":
     main()

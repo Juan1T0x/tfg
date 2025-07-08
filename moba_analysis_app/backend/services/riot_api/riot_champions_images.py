@@ -1,123 +1,138 @@
-# services/riot_api/riot_champions_images.py
-import requests
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+services.riot_api.riot_champions_images
+---------------------------------------
+
+Handles local storage and HTTP exposure of Riot-provided artwork
+(champion square icons, loading screens, and splash arts).
+
+A *single* public helper – :meth:`download_all_images` – downloads and
+updates the full library for a given Data-Dragon version:
+
+>>> from services.riot_api.riot_champions_images import (
+...     download_all_images, get_latest_version)
+>>> download_all_images(get_latest_version())
+✔ Descargadas 402 nuevas imágenes.
+
+The rest of the helpers simply return absolute paths or fully-qualified
+URLs to the stored assets.
+"""
+
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
+
+import requests
+
 from .riot_versions import get_latest_version
 
-BASE_DIR = Path(__file__).resolve().parents[2] / "assets" / "images"
-ICON_DIR, SPLASH_DIR, LOADING_DIR = (
-    BASE_DIR / "icons",
-    BASE_DIR / "splash_arts",
-    BASE_DIR / "loading_screens",
-)
-for p in (ICON_DIR, SPLASH_DIR, LOADING_DIR):
-    p.mkdir(parents=True, exist_ok=True)
+# --------------------------------------------------------------------------- #
+# Local paths                                                                 #
+# --------------------------------------------------------------------------- #
+_ASSETS_DIR: Path = Path(__file__).resolve().parents[2] / "assets" / "images"
+ICON_DIR:     Path = _ASSETS_DIR / "icons"
+SPLASH_DIR:   Path = _ASSETS_DIR / "splash_arts"
+LOADING_DIR:  Path = _ASSETS_DIR / "loading_screens"
 
+for _p in (ICON_DIR, SPLASH_DIR, LOADING_DIR):
+    _p.mkdir(parents=True, exist_ok=True)
 
+# --------------------------------------------------------------------------- #
+# Download helpers                                                            #
+# --------------------------------------------------------------------------- #
 def _download(url: str, dest: Path) -> bool:
     """
-    Descarga `url` en `dest` solo si no existe.
-    Devuelve True si realmente descargó.
+    Download *url* into *dest* only if the file does **not** already exist.
+
+    Returns ``True`` when a fresh download occurred, ``False`` otherwise.
     """
     if dest.exists():
         return False
 
-    # vuelve a crear el directorio por si lo borraron
     dest.parent.mkdir(parents=True, exist_ok=True)
-
-    r = requests.get(url, timeout=15)
-    r.raise_for_status()
-    dest.write_bytes(r.content)
+    response = requests.get(url, timeout=15)
+    response.raise_for_status()
+    dest.write_bytes(response.content)
     return True
 
 
 def download_all_images(version: str) -> int:
+    """
+    Synchronise champion images for a given Data-Dragon *version*.
+
+    Parameters
+    ----------
+    version :
+        Riot's Data-Dragon version string (``13.21.1`` …).
+
+    Returns
+    -------
+    int
+        Number of files newly downloaded.
+    """
     meta_url = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/champion.json"
-    r = requests.get(meta_url, timeout=15)
-    r.raise_for_status()
-    champions = r.json()["data"]
+    champs   = requests.get(meta_url, timeout=15).json()["data"]
 
     downloaded = 0
-    for name, info in champions.items():
+    for name, info in champs.items():
         cid = info["id"]
         assets = {
-            ICON_DIR / f"{name}_icon.png": (
-                f"https://ddragon.leagueoflegends.com/cdn/{version}/img/champion/{cid}.png"
-            ),
-            SPLASH_DIR / f"{name}_splash.jpg": (
-                f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{cid}_0.jpg"
-            ),
-            LOADING_DIR / f"{name}_loading.jpg": (
-                f"https://ddragon.leagueoflegends.com/cdn/img/champion/loading/{cid}_0.jpg"
-            ),
+            ICON_DIR   / f"{name}_icon.png"   : f"https://ddragon.leagueoflegends.com/cdn/{version}/img/champion/{cid}.png",
+            SPLASH_DIR / f"{name}_splash.jpg" : f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{cid}_0.jpg",
+            LOADING_DIR/ f"{name}_loading.jpg": f"https://ddragon.leagueoflegends.com/cdn/img/champion/loading/{cid}_0.jpg",
         }
         for path, url in assets.items():
             try:
                 if _download(url, path):
                     downloaded += 1
-            except Exception as e:
-                print(f"❌ {name}: {e}")
+            except Exception as exc:
+                print(f"⚠️  {name}: {exc}")
 
-    if downloaded:
-        print(f"✔ Descargadas {downloaded} nuevas imágenes.")
-    else:
-        print("✔ Biblioteca de imágenes ya al día.")
+    msg = "Biblioteca de imágenes ya al día." if downloaded == 0 else f"Descargadas {downloaded} nuevas imágenes."
+    print(f"✔ {msg}")
     return downloaded
 
-# ────────────────────────── RUTAS ABSOLUTAS ───────────────────────────
+# --------------------------------------------------------------------------- #
+# Absolute-path helpers                                                       #
+# --------------------------------------------------------------------------- #
+def get_icons_path() -> str        : return str(ICON_DIR.resolve())
+def get_splash_arts_path() -> str  : return str(SPLASH_DIR.resolve())
+def get_loading_screens_path() -> str: return str(LOADING_DIR.resolve())
 
-def get_icons_path() -> str:
-    """Ruta absoluta a la carpeta de iconos."""
-    return str(ICON_DIR.resolve())
-
-def get_splash_arts_path() -> str:
-    """Ruta absoluta a la carpeta de splash arts."""
-    return str(SPLASH_DIR.resolve())
-
-def get_loading_screens_path() -> str:
-    """Ruta absoluta a la carpeta de loading screens."""
-    return str(LOADING_DIR.resolve())
-
-# ───────────────────────── HELPERS PARA URLs ───────────────────────────
-
-_BASE_URL = "http://localhost:8888"
+# --------------------------------------------------------------------------- #
+# URL helpers (FastAPI serves /static/… mounts)                               #
+# --------------------------------------------------------------------------- #
+_BASE_URL     = "http://localhost:8888"
 _ICON_MOUNT   = "/static/icons"
 _SPLASH_MOUNT = "/static/splash_arts"
 _LOAD_MOUNT   = "/static/loading_screens"
 
-
-
 def _folder_to_urls(folder: Path, mount: str) -> list[str]:
-    return [
-        f"{_BASE_URL}{mount}/{f.name}"
-        for f in folder.iterdir()
-        if f.is_file()
-    ]
+    return [f"{_BASE_URL}{mount}/{fp.name}" for fp in folder.iterdir() if fp.is_file()]
 
-def list_icons_urls()        -> list[str]: 
-    return _folder_to_urls(ICON_DIR,   _ICON_MOUNT)
-
-def list_splash_urls()       -> list[str]: 
-    return _folder_to_urls(SPLASH_DIR, _SPLASH_MOUNT)
-
-def list_loading_urls()      -> list[str]: 
-    return _folder_to_urls(LOADING_DIR,_LOAD_MOUNT)
+def list_icons_urls()   -> list[str]: return _folder_to_urls(ICON_DIR,   _ICON_MOUNT)
+def list_splash_urls()  -> list[str]: return _folder_to_urls(SPLASH_DIR, _SPLASH_MOUNT)
+def list_loading_urls() -> list[str]: return _folder_to_urls(LOADING_DIR, _LOAD_MOUNT)
 
 def champion_images_urls(champion_key: str) -> dict[str, str]:
     """
-    Devuelve las tres URLs (icon, splash, loading) de `champion_key`
-    – la *key* de Riot usada en los nombres de fichero (Aatrox, DrMundo, …)
+    Return icon, splash-art and loading-screen URLs for *champion_key*.
 
-    Lanza FileNotFoundError si falta alguna de las tres imágenes.
+    Raises
+    ------
+    FileNotFoundError
+        If any of the three expected images is missing locally.
     """
     icon   = ICON_DIR   / f"{champion_key}_icon.png"
     splash = SPLASH_DIR / f"{champion_key}_splash.jpg"
     load   = LOADING_DIR/ f"{champion_key}_loading.jpg"
 
-    for f in (icon, splash, load):
-        if not f.exists():
+    for fp in (icon, splash, load):
+        if not fp.exists():
             raise FileNotFoundError(
-                f"{f.name} no encontrado. El campeón {champion_key} no existe o no está en la base de datos."
+                f"{fp.name} no encontrado — el campeón “{champion_key}” no está descargado."
             )
 
     return {
@@ -126,4 +141,3 @@ def champion_images_urls(champion_key: str) -> dict[str, str]:
         "splash_art"    : f"{_BASE_URL}{_SPLASH_MOUNT}/{splash.name}",
         "loading_screen": f"{_BASE_URL}{_LOAD_MOUNT}/{load.name}",
     }
-

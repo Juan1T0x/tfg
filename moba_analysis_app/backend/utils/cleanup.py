@@ -1,24 +1,30 @@
 """
-utils/cleanup.py
-================
-Elimina TODO el contenido de la carpeta ``backend/frames``.
-Se puede ejecutar en solitario:
+utils.cleanup
+=============
+
+Utility invoked at application start-up to ensure the folder that
+temporarily stores extracted video frames is empty.  It can also be run
+manually:
 
     python -m utils.cleanup
 """
-
 from __future__ import annotations
 
 from pathlib import Path
 import shutil
 
+# Absolute path to backend/frames  (created by the worker)
 FRAMES_DIR = Path(__file__).resolve().parents[1] / "frames"
 
 
 def cleanup_frames() -> int:
     """
-    Borra archivos y sub-carpetas de ``FRAMES_DIR``.
-    Devuelve cuántos ítems se han eliminado.
+    Remove every file and directory inside :pydata:`FRAMES_DIR`.
+
+    Returns
+    -------
+    int
+        Number of entries successfully deleted.
     """
     if not FRAMES_DIR.exists():
         return 0
@@ -28,16 +34,15 @@ def cleanup_frames() -> int:
         try:
             if item.is_file() or item.is_symlink():
                 item.unlink()
-            else:
+            else:                                   # directory
                 shutil.rmtree(item)
             deleted += 1
         except Exception as exc:
-            # No abortamos si algo falla; simplemente lo registramos.
-            print(f"⚠️  No se pudo eliminar {item}: {exc}")
+            # Keep going even if one entry cannot be removed.
+            print(f"⚠️  unable to delete {item}: {exc}")
 
     return deleted
 
 
 if __name__ == "__main__":
-    n = cleanup_frames()
-    print(f"Frames limpiados: {n}")
+    print(f"frames deleted: {cleanup_frames()}")

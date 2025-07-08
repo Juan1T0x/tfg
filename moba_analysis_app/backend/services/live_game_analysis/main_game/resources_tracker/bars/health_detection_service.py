@@ -1,15 +1,45 @@
 #!/usr/bin/env python3
+# services/live_game_analysis/main_game/resources_tracker/bars/health_detection_service.py
+"""
+Health-bar detector
+-------------------
+
+Extracts the **percentage of health** for each champion shown on the
+main-overlay of an LEC/LCS type broadcast frame.
+
+Implementation notes
+~~~~~~~~~~~~~~~~~~~~
+* The minimap/overlay geometry is provided by *main_overlay_rois.json*.
+* Two heuristics are applied to every champion sub-ROI:
+
+  1. Strict HSV threshold for *green* tones (`_LOWER_GREEN … _UPPER_GREEN`).
+  2. Morphological open/close to remove noise.
+  3. Discard blobs that are too small (`_AREA_MIN`) or too square
+     (`_ELONG_RATIO` rejects plate-shaped artefacts).
+
+The longest green run in each team ROI is considered **100 %**; every other
+bar is expressed as a percentage of that reference width.
+
+Public API
+~~~~~~~~~~
+``detect_health_bars(frame: np.ndarray,
+                     roi_template: dict | None = None) -> dict``
+"""
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np
 
+# --------------------------------------------------------------------- #
+# Paths & template                                                      #
+# --------------------------------------------------------------------- #
 _BACKEND_DIR = Path(__file__).resolve().parents[5]
-_ROI_TEMPLATE_PATH = (
+_ROI_TEMPLATE = (
     _BACKEND_DIR
     / "services"
     / "live_game_analysis"
@@ -17,82 +47,121 @@ _ROI_TEMPLATE_PATH = (
     / "main_overlay_rois.json"
 )
 
+# --------------------------------------------------------------------- #
+# Tunables                                                              #
+# --------------------------------------------------------------------- #
 _LOWER_GREEN = np.array([30, 40, 40])
 _UPPER_GREEN = np.array([80, 250, 250])
-_AREA_MIN = 300
-_ELONG_RATIO = 0.5
+_AREA_MIN    = 300                     # px²      – minimum blob area
+_ELONG_RATIO = 0.5                     # height/width ratio threshold
+
 _ROLE_ORDER = ["TOP", "JUNGLE", "MID", "BOT", "SUPPORT"]
 
 Coord = Tuple[float, float]
 
 
-def _load_rois(p: Path | None) -> tuple[dict[str, List[Coord]], tuple[int, int] | None]:
-    tpl_path = Path(p) if p else _ROI_TEMPLATE_PATH
-    tpl = json.loads(tpl_path.read_text(encoding="utf-8"))
-    ref_size = tpl.get("reference_size")
+# --------------------------------------------------------------------- #
+# Template helpers                                                      #
+# --------------------------------------------------------------------- #
+def _load_rois(custom: Path | None) -> tuple[dict[str, List[Coord]], tuple[int, int] | None]:
+    """Return ROIs as ``{"team1": [...], "team2": [...]}`` plus reference size."""
+    tpl_path = custom or _ROI_TEMPLATE
+    tpl = json.loads(Path(tpl_path).read_text(encoding="utf-8"))
     return {
         "team1": tpl["team1ChampionsResourcesRoi"],
         "team2": tpl["team2ChampionsResourcesRoi"],
-    }, ref_size
+    }, tpl.get("reference_size")
 
 
-def _scale_pts(pts: List[Coord], W: int, H: int, ref):
+def _scale_pts(
+    pts: List[Coord],
+    fw: int,
+    fh: int,
+    ref: tuple[int, int] | None,
+) -> List[Tuple[int, int]]:
+    """Normalised → absolute px, reference-based → scaled, absolute → unchanged."""
     if all(0.0 <= x <= 1.0 and 0.0 <= y <= 1.0 for x, y in pts):
-        return [(int(x * W), int(y * H)) for x, y in pts]
+        return [(int(x * fw), int(y * fh)) for x, y in pts]
+
     if ref:
         rw, rh = ref
-        return [(int(x * W / rw), int(y * H / rh)) for x, y in pts]
+        return [(int(x * fw / rw), int(y * fh / rh)) for x, y in pts]
+
     return [(int(x), int(y)) for x, y in pts]
 
 
-def _bbox(pts):
+def _bbox(pts: List[Tuple[int, int]]) -> Tuple[int, int, int, int]:
     xs, ys = zip(*pts)
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def _find_green_rects(crop: np.ndarray) -> list[tuple[int, int, int, int]]:
+# --------------------------------------------------------------------- #
+# Vision helpers                                                        #
+# --------------------------------------------------------------------- #
+def _green_runs(crop: np.ndarray) -> List[Tuple[int, int, int, int]]:
+    """Return elongated green rectangles inside *crop* (x, y, w, h)."""
     hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
-    mask0 = cv2.inRange(hsv, _LOWER_GREEN, _UPPER_GREEN)
-    kernel = np.ones((3, 3), np.uint8)
-    mask1 = cv2.morphologyEx(mask0, cv2.MORPH_OPEN, kernel)
-    mask2 = cv2.morphologyEx(mask1, cv2.MORPH_CLOSE, kernel)
-    cnts, _ = cv2.findContours(mask2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    mask = cv2.inRange(hsv, _LOWER_GREEN, _UPPER_GREEN)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN,  np.ones((3, 3), np.uint8))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
+
+    cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     rects = [cv2.boundingRect(c) for c in cnts if cv2.contourArea(c) > _AREA_MIN]
     return [(x, y, w, h) for x, y, w, h in rects if h < _ELONG_RATIO * w]
 
 
+# --------------------------------------------------------------------- #
+# Public detector                                                       #
+# --------------------------------------------------------------------- #
 def detect_health_bars(
-    frame: np.ndarray, roi_template: dict | None = None
+    frame: np.ndarray,
+    roi_template: Dict[str, Any] | None = None,
 ) -> Dict[str, Dict[str, float | None]]:
-    if frame is None or not isinstance(frame, np.ndarray):
-        raise ValueError("frame inválido")
+    """
+    Parameters
+    ----------
+    frame:
+        Full RGB/BGR broadcast frame.
+    roi_template:
+        Pre-parsed template dictionary; if *None* the default JSON on disk is
+        loaded.
 
-    H, W = frame.shape[:2]
-    rois_raw, ref_size = (
-        _load_rois(None) if roi_template is None else (roi_template, roi_template.get("reference_size"))
+    Returns
+    -------
+    dict
+        ``{"blue": {"TOP": 100.0, …}, "red": {...}}`` where missing bars are
+        *None*.
+    """
+    if not isinstance(frame, np.ndarray):
+        raise TypeError("frame must be a numpy.ndarray")
+
+    fh, fw = frame.shape[:2]
+    tpl, ref = (
+        _load_rois(Path(roi_template))            # type: ignore[arg-type]
+        if isinstance(roi_template, (str, Path))
+        else _load_rois(None)
+        if roi_template is None
+        else (roi_template, roi_template.get("reference_size"))
     )
 
-    scaled = {k: _scale_pts(v, W, H, ref_size) for k, v in rois_raw.items()}
+    scaled = {k: _scale_pts(v, fw, fh, ref) for k, v in tpl.items()}
     boxes = {k: _bbox(v) for k, v in scaled.items()}
 
-    detections: dict[str, list[tuple[int, int, int, int]]] = {"blue": [], "red": []}
-
+    detected: Dict[str, List[Tuple[int, int, int, int]]] = {"blue": [], "red": []}
     for idx, (k, (x0, y0, x1, y1)) in enumerate(boxes.items(), 1):
-        team_key = "blue" if idx == 1 else "red"
-        crop = frame[y0:y1, x0:x1]
-        rects = _find_green_rects(crop)
-        detections[team_key] = [(x + x0, y + y0, w, h) for x, y, w, h in rects]
+        key = "blue" if idx == 1 else "red"
+        rects = _green_runs(frame[y0:y1, x0:x1])
+        detected[key] = [(x + x0, y + y0, w, h) for x, y, w, h in rects]
 
     out: Dict[str, Dict[str, float | None]] = {"blue": {}, "red": {}}
-
     for team in ("blue", "red"):
-        rows = sorted(detections[team], key=lambda t: t[1])
-        max_w = max((w for _, _, w, _ in rows), default=None)
+        rows = sorted(detected[team], key=lambda r: r[1])   # sort by y-coord
+        ref_w = max((w for _, _, w, _ in rows), default=None)
 
         for i, role in enumerate(_ROLE_ORDER):
-            if i < len(rows) and max_w:
+            if i < len(rows) and ref_w:
                 _, _, w, _ = rows[i]
-                out[team][role] = round((w / max_w) * 100, 1)
+                out[team][role] = round(w / ref_w * 100, 1)
             else:
                 out[team][role] = None
 

@@ -32,20 +32,12 @@ from typing import List
 
 import requests
 
-# --------------------------------------------------------------------------- #
-# Constants / paths                                                           #
-# --------------------------------------------------------------------------- #
+# ─────────────────────────── Paths / constants ────────────────────────────
 _URL   = "https://ddragon.leagueoflegends.com/api/versions.json"
 _DB    = Path(__file__).resolve().parents[2] / "assets" / "db" / "moba_analysis.sqlite"
 _TABLE = "versions"
 
-# --------------------------------------------------------------------------- #
-# Fetch & store                                                               #
-# --------------------------------------------------------------------------- #
-def _fetch_versions() -> List[str]:
-    """Return Riot’s patch list (already sorted newest → oldest)."""
-    return requests.get(_URL, timeout=15).json()
-
+# ───────────────────────────── DB helpers ─────────────────────────────────
 def _create_table(conn: sqlite3.Connection) -> None:
     conn.execute(
         f"""
@@ -58,55 +50,82 @@ def _create_table(conn: sqlite3.Connection) -> None:
 
 def _upsert(versions: List[str]) -> int:
     """
-    Insert *all* versions keeping bidirectional uniqueness guarantees:
-    * **version_id** ↔ **version** are always in sync.
-    Returns the net number of *new* rows inserted.
+    Insert **all** versions keeping both columns unique & in-sync.
+    Return the net amount of *new* rows.
     """
     with sqlite3.connect(_DB) as conn:
         _create_table(conn)
 
-        pairs   = [(idx, v) for idx, v in enumerate(versions)]
-        sql = (
+        rows = [(idx, v) for idx, v in enumerate(versions)]
+        sql  = (
             f"INSERT INTO {_TABLE}(version_id, version) VALUES (?, ?) "
             f"ON CONFLICT(version)    DO UPDATE SET version_id = excluded.version_id "
             f"ON CONFLICT(version_id) DO UPDATE SET version    = excluded.version"
         )
 
         before = conn.execute(f"SELECT COUNT(*) FROM {_TABLE}").fetchone()[0]
-        conn.executemany(sql, pairs)
+        conn.executemany(sql, rows)
         after  = conn.execute(f"SELECT COUNT(*) FROM {_TABLE}").fetchone()[0]
 
     return after - before
 
-# --------------------------------------------------------------------------- #
-# Public helpers                                                              #
-# --------------------------------------------------------------------------- #
+# ───────────────────────────── Public API ────────────────────────────────
+def fetch_versions() -> List[str]:
+    """
+    Pull the *raw* JSON list from the Riot CDN (newest → oldest).  Network
+    errors propagate as :class:`requests.HTTPError`.
+    """
+    r = requests.get(_URL, timeout=15)
+    r.raise_for_status()
+    return r.json()
+
 def get_versions() -> List[str]:
     """
-    Return the full patch list (newest first) after refreshing the DB if
-    necessary.
+    Return the full patch list after refreshing the local cache.
     """
-    changes = _upsert(_fetch_versions())
-    if changes:
-        print(f"✔ Versiones nuevas/actualizadas: {changes}")
+    inserted = _upsert(fetch_versions())
+    if inserted:
+        print(f"✔ Versions inserted/updated: {inserted}")
+
     with sqlite3.connect(_DB) as conn:
         conn.row_factory = sqlite3.Row
-        rows = conn.execute(f"SELECT version FROM {_TABLE} ORDER BY version_id").fetchall()
+        rows = conn.execute(
+            f"SELECT version FROM {_TABLE} ORDER BY version_id"
+        ).fetchall()
+
     return [r["version"] for r in rows]
 
 def get_latest_version() -> str:
     """
-    Convenience shortcut → always the row where ``version_id = 0``.
+    Convenience helper ⇒ value where ``version_id = 0`` (always the newest).
     """
-    _upsert(_fetch_versions())        # keep table fresh
+    _upsert(fetch_versions())  # keep cache fresh
     with sqlite3.connect(_DB) as conn:
-        row = conn.execute(f"SELECT version FROM {_TABLE} WHERE version_id = 0").fetchone()
+        row = conn.execute(
+            f"SELECT version FROM {_TABLE} WHERE version_id = 0"
+        ).fetchone()
+
     if row is None:
-        raise RuntimeError("Tabla 'versions' vacía o corrupta.")
+        raise RuntimeError("Table 'versions' is empty or corrupt.")
+
     return row["version"]
 
-# --------------------------------------------------------------------------- #
-# CLI / debug                                                                 #
-# --------------------------------------------------------------------------- #
+def save_versions(versions: List[str]) -> int:
+    """
+    Upsert an *already-downloaded* list of patch strings into the DB.
+
+    Parameters
+    ----------
+    versions : list[str]
+        The exact array returned by Riot’s versions.json (newest → oldest).
+
+    Returns
+    -------
+    int
+        Net number of **new** rows inserted (same semantics as `_upsert`).
+    """
+    return _upsert(versions)
+
+# ───────────────────────────── CLI / debug ───────────────────────────────
 if __name__ == "__main__":
-    print(f"🌟 Última versión Riot: {get_latest_version()}")
+    print(f"🌟 Latest Riot patch: {get_latest_version()}")

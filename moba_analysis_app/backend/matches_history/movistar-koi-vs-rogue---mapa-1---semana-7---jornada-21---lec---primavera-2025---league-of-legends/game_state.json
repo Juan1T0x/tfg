@@ -1,0 +1,3556 @@
+{
+    "static_game_info": {
+        "blue": {
+            "color": "BLUE",
+            "team_name": "MOVISTAR KOI",
+            "champions": {
+                "TOP": "yorick",
+                "JUNGLE": "pantheon",
+                "MID": "kaisa",
+                "BOT": "kayn",
+                "SUPPORT": "rell"
+            }
+        },
+        "red": {
+            "color": "RED",
+            "team_name": "ROGUE",
+            "champions": {
+                "TOP": "ambessa",
+                "JUNGLE": "vi",
+                "MID": "ahri",
+                "BOT": "xayah",
+                "SUPPORT": "xayah"
+            }
+        }
+    },
+    "live_game_info": {
+        "startGame": {
+            "blue": {
+                "color": "BLUE",
+                "players": {
+                    "TOP": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "JUNGLE": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "MID": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "BOT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "SUPPORT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    }
+                },
+                "stats": {
+                    "total_kills": null,
+                    "total_gold": null,
+                    "towers": null,
+                    "objectives": null
+                }
+            },
+            "red": {
+                "color": "RED",
+                "players": {
+                    "TOP": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "JUNGLE": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "MID": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "BOT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    },
+                    "SUPPORT": {
+                        "health_pct": null,
+                        "mana_pct": null,
+                        "position": null,
+                        "kills": null,
+                        "deaths": null,
+                        "assists": null,
+                        "cs": null,
+                        "gold": null
+                    }
+                },
+                "stats": {
+                    "total_kills": null,
+                    "total_gold": null,
+                    "towers": null,
+                    "objectives": null
+                }
+            },
+            "global_": {
+                "dragon_timer": null,
+                "baron_timer": null,
+                "herald_timer": null,
+                "voidgrub_timer": null,
+                "atahkan_timer": null
+            }
+        },
+        "00:46": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0
+                    }
+                },
+                "stats": {
+                    "total_gold": 2500
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "SUPPORT": {
+                        "health_pct": 98.0,
+                        "mana_pct": 98.0
+                    }
+                },
+                "stats": {
+                    "total_gold": 2500
+                }
+            },
+            "global_": {}
+        },
+        "02:26": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 94.1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "cs": 4
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 3600
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "mana_pct": 61.4,
+                        "cs": 3
+                    },
+                    "MID": {
+                        "health_pct": 98.0
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 4000
+                }
+            },
+            "global_": {}
+        },
+        "03:06": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "mana_pct": 97.7
+                    },
+                    "MID": {},
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 48000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 88.2
+                    },
+                    "MID": {
+                        "mana_pct": 96.1
+                    },
+                    "BOT": {
+                        "mana_pct": 82.4
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 5200
+                }
+            },
+            "global_": {}
+        },
+        "3:23": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "mana_pct": 100.0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "cs": 6
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 5300
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 23
+                    },
+                    "MID": {
+                        "health_pct": 93.9,
+                        "cs": 2
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 5900
+                }
+            },
+            "global_": {}
+        },
+        "03:42": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 61.8,
+                        "mana_pct": 100.0,
+                        "cs": 20
+                    },
+                    "JUNGLE": {
+                        "health_pct": 64.5,
+                        "mana_pct": 98.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "MID": {
+                        "health_pct": 64.5
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 2
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 5600
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 28
+                    },
+                    "BOT": {
+                        "health_pct": 98.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 6400
+                }
+            },
+            "global_": {}
+        },
+        "3:47": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 95.9,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 93.9,
+                        "mana_pct": 100.0,
+                        "cs": 22
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 5800
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 84.3
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 28
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 6500
+                }
+            },
+            "global_": {}
+        },
+        "03:52": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 29
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {
+                        "cs": 6
+                    }
+                },
+                "stats": {
+                    "total_gold": 59000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 88.2,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 26
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 6600
+                }
+            },
+            "global_": {}
+        },
+        "04:02": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 94.0,
+                        "cs": 22
+                    },
+                    "MID": {},
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 6200
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.1,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 28
+                    },
+                    "BOT": {
+                        "cs": 28
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 6700
+                }
+            },
+            "global_": {}
+        },
+        "04:22": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 95.9,
+                        "mana_pct": 100.0,
+                        "cs": 13
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "cs": 4
+                    },
+                    "BOT": {},
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 67000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "mana_pct": 60.5
+                    },
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 70000
+                }
+            },
+            "global_": {}
+        },
+        "04:32": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 94.0,
+                        "mana_pct": 61.4
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 59.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 68000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "JUNGLE": {
+                        "cs": 26
+                    },
+                    "MID": {
+                        "cs": 3
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 7300
+                }
+            },
+            "global_": {}
+        },
+        "04:42": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 61.7
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 49.4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "health_pct": 98.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 6
+                    }
+                },
+                "stats": {
+                    "total_gold": 7000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 28
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 3
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 33
+                    },
+                    "SUPPORT": {
+                        "cs": 1
+                    }
+                },
+                "stats": {
+                    "total_gold": 7500
+                }
+            },
+            "global_": {}
+        },
+        "4:47": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 90.2,
+                        "cs": 38
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 84.3
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 6
+                    }
+                },
+                "stats": {
+                    "total_gold": 7000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 98.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 88.0,
+                        "cs": 3
+                    },
+                    "BOT": {},
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 77000
+                }
+            },
+            "global_": {}
+        },
+        "04:52": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 55.4
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 85.5,
+                        "cs": 2
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "mana_pct": 59.0
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0
+                    }
+                },
+                "stats": {
+                    "total_gold": 72000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 34
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 97.3,
+                        "cs": 32
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 61.3
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 1
+                    }
+                },
+                "stats": {
+                    "total_gold": 7800
+                }
+            },
+            "global_": {}
+        },
+        "06:02": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 71.4,
+                        "cs": 44
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 44
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 29
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 39
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 89000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.1,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "MID": {
+                        "health_pct": 96.0,
+                        "mana_pct": 96.1
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 44,
+                        "health_pct": 98.0
+                    },
+                    "SUPPORT": {
+                        "cs": 2,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 9700
+                }
+            },
+            "global_": {}
+        },
+        "05:22": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 90.0,
+                        "mana_pct": 77.6
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 72.4,
+                        "cs": 32
+                    },
+                    "BOT": {
+                        "health_pct": 96.0,
+                        "mana_pct": 98.3,
+                        "cs": 36
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0,
+                        "cs": 8
+                    }
+                },
+                "stats": {}
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 86.3,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 92.2
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 1
+                    }
+                },
+                "stats": {
+                    "total_gold": 8600
+                }
+            },
+            "global_": {}
+        },
+        "05:32": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 89.3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "mana_pct": 100.0,
+                        "cs": 36
+                    },
+                    "MID": {
+                        "health_pct": 98.0
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 36
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 84
+                    }
+                },
+                "stats": {
+                    "total_gold": 8000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 82.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "mana_pct": 98.0,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 1
+                    }
+                },
+                "stats": {
+                    "total_gold": 8300
+                }
+            },
+            "global_": {}
+        },
+        "05:42": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 43
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 79.7,
+                        "cs": 38
+                    },
+                    "MID": {
+                        "health_pct": 96.0,
+                        "mana_pct": 94.9,
+                        "cs": 36
+                    },
+                    "BOT": {
+                        "cs": 7
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 8300
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 93.9,
+                        "mana_pct": 90.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 84.0
+                    },
+                    "BOT": {
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "cs": 1
+                    }
+                },
+                "stats": {
+                    "total_gold": 9100
+                }
+            },
+            "global_": {}
+        },
+        "05:52": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 94.1,
+                        "cs": 45
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 86.3,
+                        "cs": 40
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 38
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 8600
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "mana_pct": 90.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 44
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 98.0
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 9400
+                }
+            },
+            "global_": {}
+        },
+        "06:08": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 84.0,
+                        "cs": 44
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 33
+                    },
+                    "SUPPORT": {
+                        "cs": 5
+                    }
+                },
+                "stats": {
+                    "total_gold": 9000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 86.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    }
+                },
+                "stats": {
+                    "total_gold": 9800
+                }
+            },
+            "global_": {}
+        },
+        "6:37": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 92.5,
+                        "cs": 44
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 44
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 44
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 97000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 24
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 84.0,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "health_pct": 96.0,
+                        "mana_pct": 58.0,
+                        "cs": 64
+                    },
+                    "BOT": {
+                        "mana_pct": 80.2
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 1300
+                }
+            },
+            "global_": {}
+        },
+        "06:42": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0,
+                        "cs": 44
+                    },
+                    "MID": {
+                        "health_pct": 96.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 0,
+                        "cs": 44
+                    },
+                    "BOT": {
+                        "cs": 46
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 99000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "mana_pct": 98.0
+                    },
+                    "MID": {
+                        "cs": 34
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {
+                        "cs": 2
+                    }
+                },
+                "stats": {
+                    "total_gold": 14000
+                }
+            },
+            "global_": {}
+        },
+        "06:47": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 100.0,
+                        "cs": 3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 84.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 70,
+                        "cs": 45
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 10000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 6
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 92.0
+                    },
+                    "MID": {
+                        "cs": 34
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 14000
+                }
+            },
+            "global_": {}
+        },
+        "7:02": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 63
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 0,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 10400
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "mana_pct": 84.3
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.1,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "SUPPORT": {
+                        "cs": 2
+                    }
+                },
+                "stats": {
+                    "total_gold": 117000
+                }
+            },
+            "global_": {}
+        },
+        "7:07": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 8
+                    },
+                    "JUNGLE": {
+                        "health_pct": 92.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 49
+                    },
+                    "MID": {
+                        "health_pct": 96.0,
+                        "cs": 48
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 10900
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 8
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "mana_pct": 88.2
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 1800
+                }
+            },
+            "global_": {}
+        },
+        "7:47": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 94.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0,
+                        "cs": 48
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 94.1
+                    },
+                    "SUPPORT": {
+                        "health_pct": 98.0,
+                        "cs": 0
+                    }
+                },
+                "stats": {
+                    "total_gold": 121000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 82.4,
+                        "cs": 3
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "mana_pct": 98.0,
+                        "cs": 56
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 13200
+                }
+            },
+            "global_": {}
+        },
+        "07:52": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 6
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 84.3
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 12400
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 98.0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "BOT": {
+                        "mana_pct": 100.0,
+                        "cs": 58
+                    },
+                    "SUPPORT": {
+                        "cs": 2
+                    }
+                },
+                "stats": {
+                    "total_gold": 13200
+                }
+            },
+            "global_": {}
+        },
+        "08:02": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 69
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 68.7,
+                        "cs": 38
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 12600
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 59.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 61.4,
+                        "cs": 6
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "mana_pct": 84.3
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 13600
+                }
+            },
+            "global_": {}
+        },
+        "08:12": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 94.1,
+                        "cs": 9
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 94.1,
+                        "cs": 8
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 2
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 13000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 80.4
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 61
+                    },
+                    "MID": {
+                        "health_pct": 93.9,
+                        "mana_pct": 78.4,
+                        "cs": 8
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.1
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 13800
+                }
+            },
+            "global_": {}
+        },
+        "08:22": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 76.3,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 81.4,
+                        "cs": 8
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 81.4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "mana_pct": 83.1
+                    }
+                },
+                "stats": {
+                    "total_gold": 13300
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 94.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 98.0,
+                        "cs": 3
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 82
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "cs": 5
+                    }
+                },
+                "stats": {
+                    "total_gold": 14000
+                }
+            },
+            "global_": {}
+        },
+        "06:32": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 97.9
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 95.8
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 13500
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 6
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 70.6
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 69
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 14400
+                }
+            },
+            "global_": {}
+        },
+        "08:43": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 2
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {}
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 64
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 38
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 14700
+                }
+            },
+            "global_": {}
+        },
+        "08:48": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 64
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 14000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 96.1,
+                        "cs": 64
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 98.0
+                    },
+                    "SUPPORT": {
+                        "cs": 2
+                    }
+                },
+                "stats": {
+                    "total_gold": 14700
+                }
+            },
+            "global_": {}
+        },
+        "08:53": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 87.5
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 3
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 14000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 7
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 6
+                    },
+                    "MID": {
+                        "health_pct": 98.0
+                    },
+                    "BOT": {
+                        "cs": 74
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 14800
+                }
+            },
+            "global_": {}
+        },
+        "08:58": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 78.1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 76.6,
+                        "cs": 3
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 70.3,
+                        "cs": 84
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "cs": 7
+                    }
+                },
+                "stats": {
+                    "total_gold": 141000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "mana_pct": 98.0,
+                        "cs": 64
+                    },
+                    "MID": {},
+                    "BOT": {
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "cs": 3
+                    }
+                },
+                "stats": {
+                    "total_gold": 15600
+                }
+            },
+            "global_": {}
+        },
+        "08:03": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 69.4
+                    },
+                    "MID": {
+                        "health_pct": 82.0,
+                        "mana_pct": 63.9,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "mana_pct": 61.1
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 68.1
+                    }
+                },
+                "stats": {
+                    "total_gold": 141000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "mana_pct": 100.0,
+                        "cs": 64
+                    },
+                    "MID": {
+                        "mana_pct": 80.4,
+                        "cs": 3
+                    },
+                    "BOT": {
+                        "cs": 4
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15600
+                }
+            },
+            "global_": {}
+        },
+        "08:08": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 8
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 14200
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 81.0
+                    },
+                    "JUNGLE": {
+                        "mana_pct": 100.0,
+                        "cs": 64
+                    },
+                    "MID": {
+                        "cs": 3
+                    },
+                    "BOT": {
+                        "cs": 4
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15700
+                }
+            },
+            "global_": {}
+        },
+        "0:28": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 84.0
+                    },
+                    "MID": {
+                        "mana_pct": 82.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 2
+                    },
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 147000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 71.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 68.1,
+                        "cs": 84
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 69.6,
+                        "cs": 3
+                    },
+                    "BOT": {
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "cs": 3
+                    }
+                },
+                "stats": {
+                    "total_gold": 16100
+                }
+            },
+            "global_": {}
+        },
+        "03:33": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 66.1
+                    },
+                    "MID": {
+                        "health_pct": 96.0,
+                        "mana_pct": 78.6
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 149000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 89.8,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 93.9,
+                        "cs": 84
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 83.7,
+                        "cs": 35
+                    },
+                    "BOT": {
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "mana_pct": 91.8
+                    }
+                },
+                "stats": {
+                    "total_gold": 16200
+                }
+            },
+            "global_": {}
+        },
+        "03:38": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 2,
+                        "cs": 72
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 3
+                    },
+                    "SUPPORT": {
+                        "cs": 7
+                    }
+                },
+                "stats": {
+                    "total_gold": 15000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 83.7
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 1
+                    },
+                    "SUPPORT": {
+                        "cs": 6
+                    }
+                },
+                "stats": {
+                    "total_gold": 16300
+                }
+            },
+            "global_": {}
+        },
+        "09:43": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 80
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 34
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 2
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 30
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15200
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 86.4
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 64
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "kills": 2,
+                        "deaths": 0,
+                        "assists": 1
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "cs": 6
+                    }
+                },
+                "stats": {
+                    "total_gold": 16400
+                }
+            },
+            "global_": {}
+        },
+        "09:48": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 94.9,
+                        "cs": 64
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 2
+                    },
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15300
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 88.2,
+                        "cs": 8
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 82.4
+                    },
+                    "BOT": {
+                        "mana_pct": 96.1,
+                        "cs": 4
+                    },
+                    "SUPPORT": {
+                        "cs": 3
+                    }
+                },
+                "stats": {
+                    "total_gold": 16500
+                }
+            },
+            "global_": {}
+        },
+        "02:58": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 34
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 68
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 2
+                    },
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15500
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 69.0,
+                        "mana_pct": 95.9
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 6
+                    },
+                    "MID": {
+                        "health_pct": 69.0,
+                        "cs": 2
+                    },
+                    "BOT": {
+                        "health_pct": 63.4,
+                        "cs": 3
+                    },
+                    "SUPPORT": {
+                        "health_pct": 70.4,
+                        "cs": 2
+                    }
+                },
+                "stats": {
+                    "total_gold": 16800
+                }
+            },
+            "global_": {}
+        },
+        "10:03": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 71.4,
+                        "cs": 64
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 58.9,
+                        "cs": 68
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15500
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 77.9
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 69.1,
+                        "cs": 6
+                    },
+                    "MID": {
+                        "health_pct": 92.0,
+                        "mana_pct": 69.1,
+                        "cs": 32
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 16900
+                }
+            },
+            "global_": {}
+        },
+        "10:08": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "cs": 384
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 2
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 15700
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 57.8,
+                        "cs": 6
+                    },
+                    "MID": {
+                        "health_pct": 92.0,
+                        "mana_pct": 97.6
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 171000
+                }
+            },
+            "global_": {}
+        },
+        "10:33": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 96.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 94.0
+                    },
+                    "MID": {
+                        "health_pct": 98.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 16300
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 1
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 179000
+                }
+            },
+            "global_": {}
+        },
+        "10:38": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 30
+                    },
+                    "JUNGLE": {
+                        "health_pct": 96.0,
+                        "cs": 4
+                    },
+                    "MID": {},
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 16800
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 96.1
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 12
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 18000
+                }
+            },
+            "global_": {}
+        },
+        "0:43": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "cs": 4
+                    },
+                    "MID": {
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 2
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 169000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 2
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 1
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 18200
+                }
+            },
+            "global_": {}
+        },
+        "0:48": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 55.1,
+                        "cs": 1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 4
+                    },
+                    "MID": {},
+                    "BOT": {
+                        "cs": 3
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 169000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 109
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 18300
+                }
+            },
+            "global_": {}
+        },
+        "10:53": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 2
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 170000
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 0,
+                        "assists": 0,
+                        "cs": 2
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 88.2
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 109
+                    },
+                    "BOT": {
+                        "health_pct": 98.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 18400
+                }
+            },
+            "global_": {}
+        },
+        "12:33": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "cs": 48
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 38
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0
+                    }
+                },
+                "stats": {
+                    "total_gold": 20600
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 95.9
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 98.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 21400
+                }
+            },
+            "global_": {}
+        },
+        "3:39": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 96.1
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 96.0
+                    },
+                    "SUPPORT": {
+                        "health_pct": 100.0
+                    }
+                },
+                "stats": {
+                    "total_gold": 22200
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 94.1,
+                        "cs": 13
+                    },
+                    "MID": {
+                        "mana_pct": 96.1
+                    },
+                    "BOT": {
+                        "cs": 19
+                    },
+                    "SUPPORT": {
+                        "cs": 3
+                    }
+                },
+                "stats": {}
+            },
+            "global_": {}
+        },
+        "14:04": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 52.4
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 50.0,
+                        "cs": 4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 51.2
+                    },
+                    "SUPPORT": {
+                        "mana_pct": 58.3
+                    }
+                },
+                "stats": {
+                    "total_gold": 22800
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 18
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "cs": 138
+                    },
+                    "BOT": {
+                        "cs": 12
+                    },
+                    "SUPPORT": {
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 24000
+                }
+            },
+            "global_": {}
+        },
+        "14:09": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 22900
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.0,
+                        "cs": 135
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 8
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 139
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 12
+                    },
+                    "SUPPORT": {
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 241000
+                }
+            },
+            "global_": {}
+        },
+        "14:29": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 64.3
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 96
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 3,
+                        "cs": 120
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 9
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 23400
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 67.1,
+                        "cs": 1
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 60.5,
+                        "cs": 108
+                    },
+                    "MID": {
+                        "health_pct": 98.0,
+                        "mana_pct": 64.5,
+                        "cs": 142
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 55.3
+                    },
+                    "SUPPORT": {
+                        "mana_pct": 100.0,
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 246000
+                }
+            },
+            "global_": {}
+        },
+        "14:34": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 67.6
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 36
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 1
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 49
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 23500
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 82.0,
+                        "cs": 142
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 83.6,
+                        "cs": 1
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 83.6,
+                        "cs": 142
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 1
+                    },
+                    "SUPPORT": {
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 247000
+                }
+            },
+            "global_": {}
+        },
+        "4:39": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 65.6
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 79.7,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 3,
+                        "cs": 120
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "cs": 3
+                    }
+                },
+                "stats": {
+                    "total_gold": 23700
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 100.0,
+                        "cs": 142
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 90.2,
+                        "cs": 18
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 14
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 132
+                    },
+                    "SUPPORT": {
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 24800
+                }
+            },
+            "global_": {}
+        },
+        "14:44": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 70.4,
+                        "cs": 128
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 70.4
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 23800
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 146
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 88.2,
+                        "cs": 108
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 94.1,
+                        "cs": 145
+                    },
+                    "BOT": {
+                        "cs": 1
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 25400,
+                    "towers": 1
+                }
+            },
+            "global_": {}
+        },
+        "14:49": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 61.4,
+                        "cs": 16
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 54.2,
+                        "cs": 24
+                    },
+                    "BOT": {},
+                    "SUPPORT": {}
+                },
+                "stats": {
+                    "total_gold": 23900
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 98.0,
+                        "mana_pct": 92.6,
+                        "cs": 14
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 88.9,
+                        "cs": 108
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 90.7,
+                        "cs": 1
+                    },
+                    "SUPPORT": {
+                        "cs": 4
+                    }
+                },
+                "stats": {
+                    "total_gold": 25500,
+                    "towers": 1
+                }
+            },
+            "global_": {}
+        },
+        "6:29": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 134
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "kills": 0,
+                        "deaths": 2,
+                        "assists": 3
+                    },
+                    "BOT": {
+                        "health_pct": 100.0
+                    },
+                    "SUPPORT": {
+                        "cs": 3
+                    }
+                },
+                "stats": {
+                    "total_gold": 25300,
+                    "towers": 1
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 51.9,
+                        "cs": 14
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0,
+                        "cs": 1
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "cs": 139
+                    },
+                    "SUPPORT": {
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 26900,
+                    "towers": 2
+                }
+            },
+            "global_": {}
+        },
+        "15:44": {
+            "blue": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 100.0,
+                        "mana_pct": 98.4,
+                        "cs": 139
+                    },
+                    "JUNGLE": {
+                        "health_pct": 98.0,
+                        "mana_pct": 74.6,
+                        "cs": 4
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "mana_pct": 100.0
+                    },
+                    "BOT": {
+                        "health_pct": 100.0,
+                        "mana_pct": 68.3
+                    },
+                    "SUPPORT": {
+                        "mana_pct": 81.0,
+                        "cs": 3
+                    }
+                },
+                "stats": {
+                    "total_gold": 25800,
+                    "towers": 1
+                }
+            },
+            "red": {
+                "players": {
+                    "TOP": {
+                        "health_pct": 94.0,
+                        "mana_pct": 100.0
+                    },
+                    "JUNGLE": {
+                        "health_pct": 100.0
+                    },
+                    "MID": {
+                        "health_pct": 100.0,
+                        "cs": 162
+                    },
+                    "BOT": {
+                        "health_pct": 98.0,
+                        "cs": 139
+                    },
+                    "SUPPORT": {
+                        "cs": 14
+                    }
+                },
+                "stats": {
+                    "total_gold": 27600,
+                    "towers": 2
+                }
+            },
+            "global_": {}
+        }
+    }
+}

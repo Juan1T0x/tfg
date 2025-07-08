@@ -17,6 +17,7 @@ class DBService {
   List<String>? _championNamesCache;
   Map<String, dynamic>? _allGameStatesCache;
 
+  /* ─────────── tablas auxiliares ─────────── */
   Future<List<String>> getTableNames() async => _tables;
 
   Future<List<String>> getChampionNames() async {
@@ -79,6 +80,7 @@ class DBService {
     return rows;
   }
 
+  /* ─────────── endpoints Riot extra ─────────── */
   Future<String?> getRolesOfChampion(String championName) async {
     final clean = championName.replaceAll("’", "").replaceAll("'", "").trim();
     final uri = Uri.parse('$_apiBase/api/riot/champions/$clean/roles');
@@ -103,6 +105,7 @@ class DBService {
     return (decoded['champions'] as List<dynamic>).cast<String>();
   }
 
+  /* ─────────── game-state helpers ─────────── */
   Future<Map<String, dynamic>> getAllGameStates({bool forceRefresh = false}) async {
     if (!forceRefresh && _allGameStatesCache != null) {
       return _allGameStatesCache!;
@@ -117,6 +120,17 @@ class DBService {
     return states;
   }
 
+  /* ─────────── análisis completo ─────────── */
+  Future<Map<String, dynamic>> generateAllVisuals(String matchSlug) async {
+    final uri = Uri.parse('$_apiBase/api/game_state/$matchSlug/analysis');
+    final res = await http.post(uri);
+    if (res.statusCode != 202) {
+      throw Exception('Backend ${res.statusCode}: ${res.body}');
+    }
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /* ─────────── actualizar BBDD Riot ─────────── */
   Future<Map<String, dynamic>> updateFullDatabase() async {
     final res =
         await http.post(Uri.parse('$_apiBase/api/riot/database/update'));
@@ -127,12 +141,14 @@ class DBService {
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
+  /* ─────────── utilidades varias ─────────── */
   void invalidateCache() {
     _rowsCache.clear();
     _championNamesCache = null;
     _allGameStatesCache = null;
   }
 
+  /* ─────────── visualización (PNG) ─────────── */
   Future<List<String>> _getVisuals(
     String matchSlug,
     String endpointSuffix,

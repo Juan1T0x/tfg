@@ -28,6 +28,7 @@ class _AnalysisHistoryScreenState extends State<AnalysisHistoryScreen> {
 
   String? _currentL1;                     // elemento lvl-1 activo
   String? _currentL2;                     // elemento lvl-2 activo
+  bool _runningAnalysis = false;          // flag mientras se ejecuta el análisis
 
   @override
   void initState() {
@@ -96,7 +97,6 @@ class _AnalysisHistoryScreenState extends State<AnalysisHistoryScreen> {
         .toList()
       ..sort();
 
-    // si no existe segundo nivel vamos directos a los png
     _lvl3 = _lvl2.isEmpty
         ? (_urls.where((u) => u.contains('/$l1/')).toList()..sort())
         : [];
@@ -115,6 +115,30 @@ class _AnalysisHistoryScreenState extends State<AnalysisHistoryScreen> {
         .toList()
       ..sort();
     setState(() {});
+  }
+
+  /* ─────────────────── ejecutar análisis completo ─────────────────── */
+
+  Future<void> _runAnalysis() async {
+    if (_selectedSlug == null || _runningAnalysis) return;
+    setState(() => _runningAnalysis = true);
+
+    try {
+      await DBService.instance.generateAllVisuals(_selectedSlug!);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('✔ Análisis lanzado correctamente')),
+      );
+      // invalidamos caché y recargamos visuales
+      await _loadCategory(_selectedCategory ?? 'game_state');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Error generando análisis: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _runningAnalysis = false);
+    }
   }
 
   /* ─────────────────── UI central ─────────────────── */
@@ -290,6 +314,20 @@ class _AnalysisHistoryScreenState extends State<AnalysisHistoryScreen> {
                     onPressed:
                         _selectedSlug == null ? null : () => _loadCategory('gold_diff'),
                     child: const Text('mostrar gold diff'),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: (_selectedSlug == null || _runningAnalysis)
+                        ? null
+                        : _runAnalysis,
+                    icon: _runningAnalysis
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.play_arrow),
+                    label: const Text('ejecutar analysis'),
                   ),
                 ],
               ),

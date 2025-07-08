@@ -1,61 +1,76 @@
 # services/video/frame_extractor.py
-"""
-Extrae **un solo fotograma** de un vídeo online con yt-dlp + ffmpeg.
-
-`extract_frame(url, t)`  ➜  Path al JPG creado en backend/frames
-"""
 from __future__ import annotations
 
-import asyncio, hashlib, subprocess
+import asyncio, hashlib, subprocess, tempfile
 from pathlib import Path
 from typing import Any
 
 from yt_dlp import YoutubeDL
 
-# ────────────────────── rutas ──────────────────────
-BASE_DIR   = Path(__file__).resolve().parents[2]        # …/backend
+
+BASE_DIR   = Path(__file__).resolve().parents[2]
 FRAMES_DIR = BASE_DIR / "frames"
 COOKIES_TXT = Path(__file__).parent / "cookies.txt"
 FRAMES_DIR.mkdir(exist_ok=True)
 
-# ────────────────────── helper ─────────────────────
-def _stream_url(url: str) -> str:
-    """Resuelve la URL de streaming más alta disponible."""
-    ydl_opts: dict[str, Any] = {"format": "bestvideo[ext=mp4]+bestaudio/best"}
+
+def _best_stream_urls(url: str) -> tuple[str, str]:
+    """
+    Devuelve (video_only_url, progressive_url).
+    progressive_url se usa como *plan B* si el primero da error 403.
+    """
+    ydl_opts: dict[str, Any] = {"quiet": True, "skip_download": True}
     if COOKIES_TXT.exists():
         ydl_opts["cookiefile"] = str(COOKIES_TXT)
 
-    info = YoutubeDL(ydl_opts).extract_info(url, download=False)
-    if info.get("url"):                          # type: ignore[arg-type]
-        return info["url"]                       # type: ignore[index]
+    with YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
 
-    fmt = max(info["formats"], key=lambda f: f.get("height") or 0)
-    return fmt["url"]                            # type: ignore[index]
+    video_only = [
+        f for f in info["formats"]
+        if f.get("vcodec") != "none" and f.get("acodec") == "none"
+    ]
+    progressive = [
+        f for f in info["formats"]
+        if f.get("vcodec") != "none" and f.get("acodec") != "none"
+    ]
+    if not progressive:
+        raise RuntimeError("no hay streams progresivos disponibles")
+
+    v_only_url = max(video_only, key=lambda f: f.get("height") or 0)["url"] if video_only else ""
+    prog_url   = max(progressive, key=lambda f: f.get("height") or 0)["url"]
+    return v_only_url, prog_url
 
 
-# ────────────────────── API pública ─────────────────────
-def extract_frame(url: str, time_pos: float) -> Path:
-    """
-    Descarga un único frame y lo guarda en *backend/frames*.
-    Devuelve la **ruta absoluta** del .jpg resultante.
-    """
-    frame_name = hashlib.md5(f"{url}|{time_pos:.3f}".encode()).hexdigest() + ".jpg"
-    frame_path = FRAMES_DIR / frame_name
-
-    stream_url = _stream_url(url)
+def _ffmpeg_frame(stream_url: str, t: float, dest: Path) -> None:
     cmd = [
-        "ffmpeg",
-        "-ss", str(time_pos),
-        "-i",  stream_url,
+        "ffmpeg", "-loglevel", "error",
+        "-i", stream_url,
+        "-ss", str(t),
         "-frames:v", "1",
         "-q:v", "2",
-        "-y", str(frame_path),
+        "-y", str(dest),
     ]
     subprocess.run(cmd, check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return frame_path.resolve()
 
 
-async def async_extract_frame(url: str, time_pos: float) -> Path:
-    """Versión *async friendly* que usa `asyncio.to_thread`."""
-    return await asyncio.to_thread(extract_frame, url, time_pos)
+def extract_frame(url: str, t: float) -> Path:
+    name = hashlib.md5(f"{url}|{t:.3f}".encode()).hexdigest() + ".jpg"
+    jpg  = FRAMES_DIR / name
+
+    v_only, prog = _best_stream_urls(url)
+
+    try:
+        if v_only:
+            _ffmpeg_frame(v_only, t, jpg)            # plan A
+        else:
+            raise RuntimeError                       # obliga a ir al plan B
+    except Exception:
+        _ffmpeg_frame(prog, t, jpg)                  # plan B (progresivo)
+
+    return jpg.resolve()
+
+
+async def async_extract_frame(url: str, t: float) -> Path:
+    return await asyncio.to_thread(extract_frame, url, t)
